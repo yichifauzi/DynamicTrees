@@ -916,28 +916,6 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         return this;
     }
 
-//    private boolean canCraftSeedToSapling = true;
-//
-//    public Species setCanCraftSeedToSapling(boolean truth) {
-//        this.canCraftSeedToSapling = truth;
-//        return this;
-//    }
-//
-//    public boolean canCraftSeedToSapling() {
-//        return canCraftSeedToSapling;
-//    }
-//
-//    private boolean canCraftSaplingToSeed = true;
-//
-//    public Species setCanCraftSaplingToSeed(boolean truth) {
-//        this.canCraftSaplingToSeed = truth;
-//        return this;
-//    }
-//
-//    public boolean canCraftSaplingToSeed() {
-//        return canCraftSaplingToSeed;
-//    }
-
     /**
      * Holds whether a {@link Seed} should be generated. Stored as a {@code non-primitive} so its default value
      * is {@code null}.
@@ -2270,10 +2248,18 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         return Collections.singletonList(DTItemTags.SEEDS);
     }
 
+    protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
+    public static final String SAPLING = "sapling";
+
+    public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
+        this.modelOverrides.putAll(modelOverrides);
+    }
+
     /**
      * @return the location of the dynamic sapling smartmodel for this type of species
      */
     public ResourceLocation getSaplingSmartModelLocation() {
+        if (modelOverrides.containsKey(SAPLING)) return modelOverrides.get(SAPLING);
         return DynamicTrees.location("block/smartmodel/sapling");
     }
 
@@ -2282,8 +2268,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
 
     public void addSaplingTextures(BiConsumer<String, ResourceLocation> textureConsumer,
                                    ResourceLocation leavesTextureLocation, ResourceLocation barkTextureLocation) {
-        ResourceLocation leavesLoc = getLeavesProperties().getTexturePath().orElse(leavesTextureLocation);
-        textureConsumer.accept("log", barkTextureLocation);
+        ResourceLocation leavesLoc = getLeavesProperties().getTexturePath(LeavesProperties.LEAVES).orElse(leavesTextureLocation);
+        ResourceLocation logLoc = getFamily().getTexturePath(Family.BRANCH).orElse(barkTextureLocation);
+        textureConsumer.accept("log", logLoc);
         textureConsumer.accept("leaves", leavesLoc);
     }
 

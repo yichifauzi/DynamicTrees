@@ -19,6 +19,9 @@
     "acceptable_growth_blocks": ["minecraft:warped_nylium", "dynamictrees:rooty_warped_nylium"],
     "mega_species": "mega_warped",
     "sapling_shape": "flat_mushroom",
+    "model_overrides": {
+        "sapling": "dynamictrees:block/smartmodel/mushroom_round"
+    },
     "features": [
         "clear_volume",
         "shroomlight",
