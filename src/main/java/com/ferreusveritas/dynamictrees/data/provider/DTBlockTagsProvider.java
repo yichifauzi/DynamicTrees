@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -54,7 +55,9 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
                 .add(Blocks.PINK_PETALS)
                 .add(Blocks.BROWN_MUSHROOM)
                 .add(Blocks.RED_MUSHROOM)
-                .addTag(BlockTags.FLOWERS);
+                .add(Blocks.LILY_PAD)
+                .addTag(BlockTags.FLOWERS)
+                .addTag(BlockTags.REPLACEABLE_PLANTS);
 
         this.tag(DTBlockTags.STRIPPED_BRANCHES)
                 .addTag(DTBlockTags.STRIPPED_BRANCHES_THAT_BURN)
