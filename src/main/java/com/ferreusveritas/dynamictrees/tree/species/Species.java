@@ -289,6 +289,11 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
      */
     protected Supplier<DynamicSaplingBlock> saplingBlock;
 
+    /**
+     * Wether the sapling block should be tinted with the leaves' tint index/
+     */
+    protected Boolean tintSapling = true;
+
     //WorldGen
     /**
      * A map of environmental biome factors that change a tree's suitability
@@ -988,7 +993,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
      */
     public boolean plantSapling(LevelAccessor level, BlockPos pos, boolean locationOverride) {
 
-        final DynamicSaplingBlock sapling = this.getSapling().or(() -> this.getCommonSpecies().getSapling()).orElse(null);
+        final DynamicSaplingBlock sapling = this.getSapling().or(() ->
+                isMegaSpecies() ? getPreMegaSpecies().getSapling() : this.getCommonSpecies().getSapling()
+                ).orElse(null);
 
         if (sapling == null || !level.getBlockState(pos).canBeReplaced() ||
                 !DynamicSaplingBlock.canSaplingStay(level, this, pos)) {
@@ -1102,16 +1109,27 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         }
     }
 
+    public String getSaplingModelName() {
+        return "block/saplings/" + Objects.requireNonNullElseGet(saplingName, () -> this.getRegistryName().getPath());
+    }
+
     public void setSaplingName(String name) {
         saplingName = name;
     }
 
+    public void setTintSapling(Boolean tintSapling) {
+        this.tintSapling = tintSapling;
+    }
+
     public int saplingColorMultiplier(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
-        if (tintIndex == 0)
-            return getLeavesProperties().foliageColorMultiplier(state, level, pos);
-        if (tintIndex == 1)
-            return family.getRootColor(state, true);
-        return -1;
+        if (tintSapling){
+            if (tintIndex == 0)
+                return getLeavesProperties().foliageColorMultiplier(state, level, pos);
+            if (tintIndex == 1)
+                return family.getRootColor(state, true);
+            return -1;
+        } else return 0xFFFFFFFF;
+
     }
 
     private SoundType saplingSound = SoundType.GRASS;
@@ -1928,19 +1946,23 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     ///////////////////////////////////////////
 
     private Species megaSpecies = Species.NULL_SPECIES;
-    private boolean isMegaSpecies = false;
+    private Species preMegaSpecies = Species.NULL_SPECIES;
 
     public Species getMegaSpecies() {
         return this.megaSpecies;
     }
 
+    public Species getPreMegaSpecies() {
+        return this.preMegaSpecies;
+    }
+
     public boolean isMegaSpecies() {
-        return isMegaSpecies;
+        return preMegaSpecies.isValid();
     }
 
     public void setMegaSpecies(final Species megaSpecies) {
         this.megaSpecies = megaSpecies;
-        megaSpecies.isMegaSpecies = true;
+        megaSpecies.preMegaSpecies = this;
     }
 
     ///////////////////////////////////////////
@@ -2251,6 +2273,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
     public static final String SAPLING = "sapling";
+    public static final String SEED_PARENT = "seed_parent";
+    public static final String SEED = "seed";
+
 
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
         this.modelOverrides.putAll(modelOverrides);
@@ -2265,7 +2290,6 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }
-
     /**
      * @return the location of the dynamic sapling smartmodel for this type of species
      */
@@ -2294,7 +2318,8 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     /**
      * @return the location of the parent model of the seed item model
      */
-    public ResourceLocation getSeedParentLocation() {
+    public ResourceLocation getSeedParentModelLocation() {
+        if (modelOverrides.containsKey(SEED_PARENT)) return modelOverrides.get(SEED_PARENT);
         return DynamicTrees.location("item/standard_seed");
     }
 

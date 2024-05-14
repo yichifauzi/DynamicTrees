@@ -171,7 +171,6 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
     protected AgeingConfiguration ageingConfiguration = AgeingConfiguration.ALWAYS;
     protected boolean connectAnyRadius = false;
     protected boolean requiresShears = true;
-    protected ResourceLocation texturePath;
 
     private LeavesProperties() {
         this.blockLootTableSupplier = new LootTableSupplier("null/", DTTrees.NULL);
@@ -316,7 +315,6 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
         this.modelOverrides.putAll(modelOverrides);
     }
-
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }

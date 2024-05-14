@@ -20,9 +20,9 @@ public class SoilStateGenerator implements Generator<DTBlockStateProvider, SoilP
     public void generate(DTBlockStateProvider provider, SoilProperties input, Dependencies dependencies) {
         provider.getMultipartBuilder(dependencies.get(SOIL))
                 .part().modelFile(provider.models().getExistingFile(
-                        provider.block(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(dependencies.get(PRIMITIVE_SOIL))))
+                        input.getModelPath(SoilProperties.SOIL_BLOCK).orElse(provider.block(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(dependencies.get(PRIMITIVE_SOIL)))))
                 )).addModel().end()
-                .part().modelFile(provider.models().getExistingFile(input.getRootsOverlayLocation())).addModel().end();
+                .part().modelFile(provider.models().getExistingFile(input.getRootsOverlayModelLocation())).addModel().end();
     }
 
     @Override

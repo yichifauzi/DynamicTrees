@@ -15,8 +15,8 @@ public class SeedItemModelGenerator implements Generator<DTItemModelProvider, Sp
     @Override
     public void generate(DTItemModelProvider provider, Species input, Dependencies dependencies) {
         final Seed seed = dependencies.get(SEED);
-        provider.withExistingParent(String.valueOf(ForgeRegistries.ITEMS.getKey(seed)), seed.getSpecies().getSeedParentLocation())
-                .texture("layer0", provider.item(ForgeRegistries.ITEMS.getKey(seed)));
+        provider.withExistingParent(String.valueOf(ForgeRegistries.ITEMS.getKey(seed)), seed.getSpecies().getSeedParentModelLocation())
+                .texture("layer0", seed.getSpecies().getTexturePath(Species.SEED).orElse(provider.item(ForgeRegistries.ITEMS.getKey(seed))));
     }
 
     @Override

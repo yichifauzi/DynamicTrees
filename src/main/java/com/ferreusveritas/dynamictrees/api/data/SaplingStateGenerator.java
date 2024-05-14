@@ -26,7 +26,7 @@ public class SaplingStateGenerator implements Generator<DTBlockStateProvider, Sp
                 .map(primitiveLeaves -> provider.block(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(primitiveLeaves))));
         final ResourceLocation primitiveLogLocation = Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(dependencies.get(PRIMITIVE_LOG)));
 
-        final BlockModelBuilder builder = provider.models().getBuilder("block/saplings/" + input.getRegistryName().getPath())
+        final BlockModelBuilder builder = provider.models().getBuilder(input.getSaplingModelName())
                 .parent(provider.models().getExistingFile(input.getSaplingSmartModelLocation()))
                 .renderType("cutout_mipped");
         input.addSaplingTextures(builder::texture, leavesTextureLocation.orElse(primitiveLogLocation), provider.block(primitiveLogLocation));
