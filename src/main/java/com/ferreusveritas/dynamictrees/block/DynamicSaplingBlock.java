@@ -103,7 +103,7 @@ public class DynamicSaplingBlock extends Block implements BonemealableBlock, IPl
     @Override
     public void performBonemeal(@Nonnull ServerLevel level, @Nonnull RandomSource rand, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         if (this.canSurvive(state, level, pos)) {
-            final Species species = this.getSpecies();
+            final Species species = this.getSpecies().selfOrLocationOverride(level, pos);;
             if (species.canSaplingGrow(level, pos)) {
                 species.transitionToTree(level, pos);
             }

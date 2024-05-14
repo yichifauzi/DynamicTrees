@@ -25,6 +25,8 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -225,7 +227,26 @@ public class SoilProperties extends RegistryEntry<SoilProperties> implements Res
         this.soilStateGenerator.get().generate(provider, this);
     }
 
-    public ResourceLocation getRootsOverlayLocation() {
+    protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
+    protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
+    public static final String ROOTS = "roots";
+    public static final String SOIL_BLOCK = "soil_block";
+
+    public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
+        this.textureOverrides.putAll(textureOverrides);
+    }
+    public Optional<ResourceLocation> getTexturePath(String key) {
+        return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
+    }
+    public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
+        this.modelOverrides.putAll(modelOverrides);
+    }
+    public Optional<ResourceLocation> getModelPath(String key) {
+        return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
+    }
+
+    public ResourceLocation getRootsOverlayModelLocation() {
+        if (modelOverrides.containsKey(ROOTS)) return modelOverrides.get(ROOTS);
         return DynamicTrees.location("block/roots");
     }
 
@@ -237,4 +258,5 @@ public class SoilProperties extends RegistryEntry<SoilProperties> implements Res
     public String toString() {
         return getRegistryName().toString();
     }
+
 }

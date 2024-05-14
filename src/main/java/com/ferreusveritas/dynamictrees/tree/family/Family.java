@@ -62,7 +62,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
@@ -851,7 +850,9 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     protected final MutableLazyValue<Generator<DTItemModelProvider, Family>> branchItemModelGenerator =
             MutableLazyValue.supplied(BranchItemModelGenerator::new);
 
+    //Texture overrides
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
+    protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
     public static final String BRANCH = "branch";
     public static final String BRANCH_TOP = "branch_top";
     public static final String STRIPPED_BRANCH = "stripped_branch";
@@ -861,6 +862,16 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
 
     public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
         this.textureOverrides.putAll(textureOverrides);
+    }
+    public Optional<ResourceLocation> getTexturePath(String key) {
+        return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
+    }
+    //There are no models to override but this is here for future-proofing.
+    public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
+        this.modelOverrides.putAll(textureOverrides);
+    }
+    public Optional<ResourceLocation> getModelPath(String key) {
+        return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
     }
 
     /**
@@ -896,10 +907,6 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
 
         textureConsumer.accept("bark", bark);
         textureConsumer.accept("rings", rings);
-    }
-
-    public Optional<ResourceLocation> getTexturePath(String key) {
-        return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }
 
     @Override

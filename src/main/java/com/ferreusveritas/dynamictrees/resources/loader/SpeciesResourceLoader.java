@@ -107,6 +107,7 @@ public final class SpeciesResourceLoader extends JsonRegistryResourceLoader<Spec
                 .register("mega_species", ResourceLocation.class, this::setMegaSpecies)
                 .register("seed", Seed.class, (species, seed) -> species.setSeed(() -> seed))
                 .register("seed_composter_chance", Float.class, this.composterChanceCache::put)
+                .register("tint_sapling", Boolean.class, Species::setTintSapling)
                 .register("sapling_grows_naturally", Boolean.class, Species::setCanSaplingGrowNaturally)
                 .register("primitive_sapling", SeedSaplingRecipe.class, Species::addPrimitiveSaplingRecipe)
                 .registerArrayApplier("primitive_saplings", SeedSaplingRecipe.class, Species::addPrimitiveSaplingRecipe)

@@ -118,7 +118,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -131,17 +130,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -321,6 +310,11 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
      * A blockState that will turn itself into this tree
      */
     protected Supplier<DynamicSaplingBlock> saplingBlock;
+
+    /**
+     * Wether the sapling block should be tinted with the leaves' tint index/
+     */
+    protected Boolean tintSapling = true;
 
     //WorldGen
     /**
@@ -1021,7 +1015,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
      */
     public boolean plantSapling(LevelAccessor level, BlockPos pos, boolean locationOverride) {
 
-        final DynamicSaplingBlock sapling = this.getSapling().or(() -> this.getCommonSpecies().getSapling()).orElse(null);
+        final DynamicSaplingBlock sapling = this.getSapling().or(() ->
+                isMegaSpecies() ? getPreMegaSpecies().getSapling() : this.getCommonSpecies().getSapling()
+                ).orElse(null);
 
         if (sapling == null || !level.getBlockState(pos).getMaterial().isReplaceable() ||
                 !DynamicSaplingBlock.canSaplingStay(level, this, pos)) {
@@ -1135,16 +1131,27 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         }
     }
 
+    public String getSaplingModelName() {
+        return "block/saplings/" + Objects.requireNonNullElseGet(saplingName, () -> this.getRegistryName().getPath());
+    }
+
     public void setSaplingName(String name) {
         saplingName = name;
     }
 
+    public void setTintSapling(Boolean tintSapling) {
+        this.tintSapling = tintSapling;
+    }
+
     public int saplingColorMultiplier(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
-        if (tintIndex == 0)
-            return getLeavesProperties().foliageColorMultiplier(state, level, pos);
-        if (tintIndex == 1)
-            return family.getRootColor(state, true);
-        return -1;
+        if (tintSapling){
+            if (tintIndex == 0)
+                return getLeavesProperties().foliageColorMultiplier(state, level, pos);
+            if (tintIndex == 1)
+                return family.getRootColor(state, true);
+            return -1;
+        } else return 0xFFFFFFFF;
+
     }
 
     private SoundType saplingSound = SoundType.GRASS;
@@ -1961,19 +1968,23 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     ///////////////////////////////////////////
 
     private Species megaSpecies = Species.NULL_SPECIES;
-    private boolean isMegaSpecies = false;
+    private Species preMegaSpecies = Species.NULL_SPECIES;
 
     public Species getMegaSpecies() {
         return this.megaSpecies;
     }
 
+    public Species getPreMegaSpecies() {
+        return this.preMegaSpecies;
+    }
+
     public boolean isMegaSpecies() {
-        return isMegaSpecies;
+        return preMegaSpecies.isValid();
     }
 
     public void setMegaSpecies(final Species megaSpecies) {
         this.megaSpecies = megaSpecies;
-        megaSpecies.isMegaSpecies = true;
+        megaSpecies.preMegaSpecies = this;
     }
 
     ///////////////////////////////////////////
@@ -2284,6 +2295,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
     public static final String SAPLING = "sapling";
+    public static final String SEED_PARENT = "seed_parent";
+    public static final String SEED = "seed";
+
 
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
         this.modelOverrides.putAll(modelOverrides);
@@ -2298,7 +2312,6 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }
-
     /**
      * @return the location of the dynamic sapling smartmodel for this type of species
      */
@@ -2327,7 +2340,8 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     /**
      * @return the location of the parent model of the seed item model
      */
-    public ResourceLocation getSeedParentLocation() {
+    public ResourceLocation getSeedParentModelLocation() {
+        if (modelOverrides.containsKey(SEED_PARENT)) return modelOverrides.get(SEED_PARENT);
         return DynamicTrees.location("item/standard_seed");
     }
 

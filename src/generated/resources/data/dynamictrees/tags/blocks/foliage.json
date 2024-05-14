@@ -1,8 +1,7 @@
 {
   "values": [
-    "minecraft:grass",
-    "minecraft:tall_grass",
-    "minecraft:fern",
-    "minecraft:lily_pad"
+    "minecraft:lily_pad",
+    "#minecraft:flowers",
+    "#minecraft:replaceable_plants"
   ]
 }

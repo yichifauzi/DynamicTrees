@@ -9,8 +9,10 @@ import com.ferreusveritas.dynamictrees.block.rooty.SpreadableSoilProperties;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonHelper;
 import com.ferreusveritas.dynamictrees.deserialisation.ResourceLocationDeserialiser;
 import com.ferreusveritas.dynamictrees.deserialisation.result.JsonResult;
+import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -32,7 +34,11 @@ public final class SoilPropertiesResourceLoader extends JsonRegistryResourceLoad
         );
 
         // Primitive soil is needed before gathering data.
-        this.gatherDataAppliers.register("primitive_soil", Block.class, SoilProperties::setPrimitiveSoilBlock);
+        this.gatherDataAppliers
+                .register("primitive_soil", Block.class, SoilProperties::setPrimitiveSoilBlock)
+                .registerMapApplier("model_overrides", ResourceLocation.class, SoilProperties::setModelOverrides)
+                .registerMapApplier("texture_overrides", ResourceLocation.class, SoilProperties::setTextureOverrides);
+        ;
 
         this.setupAppliers.register("primitive_soil", Block.class, SoilProperties::setPrimitiveSoilBlock);
 
