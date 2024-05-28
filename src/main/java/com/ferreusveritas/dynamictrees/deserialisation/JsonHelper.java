@@ -17,6 +17,8 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -143,14 +145,26 @@ public class JsonHelper {
 
     public static void throwIfShouldNotLoad(JsonObject json) throws IgnoreThrowable {
         final String key = "only_if_loaded";
-        if (json.has(key)) {
-            final boolean continueLoading = JsonDeserialisers.STRING.deserialise(json.get(key))
-                    .map(modId -> ModList.get().isLoaded(modId))
-                    .orElse(true);
-            if (!continueLoading) {
-                throw IgnoreThrowable.INSTANCE;
-            }
+        if (!json.has(key)) return;
+        JsonElement element = json.get(key);
+        AtomicBoolean continueLoading = new AtomicBoolean(true);
+        if (element.isJsonArray()) {
+            element.getAsJsonArray().forEach((element1 -> {
+                if (!isModLoaded(element1)) continueLoading.set(false);
+            }));
+        } else if (element.isJsonPrimitive()){
+            continueLoading.set(isModLoaded(element));
         }
+        if (!continueLoading.get()) {
+            throw IgnoreThrowable.INSTANCE;
+        }
+
+    }
+
+    private static boolean isModLoaded(JsonElement element){
+        return JsonDeserialisers.STRING.deserialise(element)
+                .map(modId -> ModList.get().isLoaded(modId))
+                .orElse(true);
     }
 
 }
