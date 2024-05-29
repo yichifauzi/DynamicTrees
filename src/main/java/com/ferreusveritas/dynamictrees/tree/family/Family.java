@@ -879,12 +879,6 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
         return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
     }
 
-    /**
-     * @deprecated Use method with that includes the Block parameter
-     * @see Family#addBranchTextures(BiConsumer, ResourceLocation, Block)
-     */
-    @Deprecated
-    public void addBranchTextures(BiConsumer<String, ResourceLocation> textureConsumer, ResourceLocation primitiveLogLocation) {}
     public void addBranchTextures(BiConsumer<String, ResourceLocation> textureConsumer, ResourceLocation primitiveLogLocation, Block sourceBlock) {
         ResourceLocation bark = primitiveLogLocation;
         ResourceLocation rings = suffix(primitiveLogLocation, "_top");
