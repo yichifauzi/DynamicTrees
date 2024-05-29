@@ -9,6 +9,6 @@
     "minecraft:red_mushroom",
     "minecraft:lily_pad",
     "#minecraft:flowers",
-    "#minecraft:replaceable_plants"
+    "#minecraft:replaceable_by_trees"
   ]
 }
