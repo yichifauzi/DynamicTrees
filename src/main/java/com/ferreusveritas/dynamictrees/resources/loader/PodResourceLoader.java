@@ -43,7 +43,9 @@ public final class PodResourceLoader extends JsonRegistryResourceLoader<Pod> {
         this.commonAppliers.register("block_shapes", JsonObject.class, this::readBlockShapes);
 
         // Item is needed on datagen and setup
-        this.gatherDataAppliers.register("item_stack", Item.class, (pod, item) -> pod.setItemStack(new ItemStack(item)));
+        this.gatherDataAppliers
+                .register("item_stack", Item.class, (pod, item) -> pod.setItemStack(new ItemStack(item)))
+                .register("drop_count", Integer.class, Pod::setDropCount);
         this.setupAppliers.register("item_stack", Item.class, (pod, item) -> pod.setItemStack(new ItemStack(item)));
 
         this.reloadAppliers

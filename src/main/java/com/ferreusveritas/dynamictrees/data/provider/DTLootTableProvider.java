@@ -279,23 +279,43 @@ public class DTLootTableProvider extends LootTableProvider {
             ).apply(ApplyExplosionDecay.explosionDecay()).setParamSet(LootContextParamSets.BLOCK);
         }
 
-        public static LootTable.Builder createPodDrops(Block podBlock, Item podItem, IntegerProperty ageProperty, int matureAge) {
-            return LootTable.lootTable().withPool(
-                    LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(
-                            LootItem.lootTableItem(podItem)
-                                    .apply(
-                                            SetItemCountFunction.setCount(ConstantValue.exactly(3))
-                                                    .when(
-                                                            LootItemBlockStatePropertyCondition.hasBlockStateProperties(podBlock)
-                                                                    .setProperties(
-                                                                            StatePropertiesPredicate.Builder.properties()
-                                                                                    .hasProperty(ageProperty, matureAge)
-                                                                    )
-                                                    )
-                                    )
-                                    .apply(ApplyExplosionDecay.explosionDecay())
-                    )
-            ).setParamSet(LootContextParamSets.BLOCK);
-        }
+
+		public static LootTable.Builder createPodDrops(Block podBlock, Item podItem, IntegerProperty ageProperty, int matureAge, int dropCount) {
+			return LootTable.lootTable().withPool(
+					LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(
+							LootItem.lootTableItem(podItem)
+									.apply(
+											SetItemCountFunction.setCount(ConstantValue.exactly(dropCount))
+													.when(
+															LootItemBlockStatePropertyCondition.hasBlockStateProperties(podBlock)
+																	.setProperties(
+																			StatePropertiesPredicate.Builder.properties()
+																					.hasProperty(ageProperty, matureAge)
+																	)
+													)
+									)
+									.apply(ApplyExplosionDecay.explosionDecay())
+					)
+			).setParamSet(LootContextParamSets.BLOCK);
+		}
+	}
+
+
+
+    private void writeTables(CachedOutput cache) {
+        Path outputFolder = this.generator.getOutputFolder();
+        lootTables.forEach((key, lootTable) -> {
+            Path path = outputFolder.resolve("data/" + key.getNamespace() + "/" + key.getPath());
+            try {
+                DataProvider.saveStable(cache, LootTables.serialize(lootTable.build()), path);
+            } catch (IOException e) {
+                LOGGER.error("Couldn't write loot table {}", path, e);
+            }
+        });
+    }
+
+    @Override
+    public String getName() {
+        return modId;
     }
 }
