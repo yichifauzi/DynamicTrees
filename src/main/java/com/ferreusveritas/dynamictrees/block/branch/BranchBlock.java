@@ -41,9 +41,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
@@ -201,7 +199,7 @@ public abstract class BranchBlock extends BlockWithDynamicHardness implements Tr
     }
 
     public boolean canBeStripped(BlockState state, Level level, BlockPos pos, Player player, ItemStack heldItem) {
-        final int stripRadius = DTConfigs.MIN_RADIUS_FOR_STRIP.get();
+        final int stripRadius = getFamily().getMinRadiusForStripping();
         return stripRadius != 0 && stripRadius <= this.getRadius(state) && this.canBeStripped && heldItem.canPerformAction(ToolActions.AXE_STRIP);
     }
 
@@ -222,7 +220,7 @@ public abstract class BranchBlock extends BlockWithDynamicHardness implements Tr
                 strippedBranch.setRadius(
                         level,
                         pos,
-                        Math.max(1, radius - (DTConfigs.ENABLE_STRIP_RADIUS_REDUCTION.get() ? 1 : 0)),
+                        Math.max(1, radius - (getFamily().reduceRadiusWhenStripping() ? 1 : 0)),
                         null, 3
                 )
         );
