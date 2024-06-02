@@ -4,6 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
+import net.minecraftforge.registries.holdersets.OrHolderSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class DTBiomeHolderSet extends IncludesExcludesHolderSet<Biome> {
     private Set<ResourceKey<Biome>> keys = null;
 
     public DTBiomeHolderSet() {
-        super(new AndHolderSet<>(new ArrayList<>()), new AndHolderSet<>(new ArrayList<>()));
+        super(new AndHolderSet<>(new ArrayList<>()), new OrHolderSet<>(new ArrayList<>()));
         this.addInvalidationListener(() -> this.keys = null);
     }
 
