@@ -19,10 +19,7 @@ import net.minecraftforge.registries.holdersets.OrHolderSet;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -79,18 +76,47 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
             biomeList.getExcludeComponents().add(new OrHolderSet<>(orExcludes));
     };
 
+    private static final VoidApplier<DTBiomeHolderSet, JsonArray> TAGS_OR_APPLIER = (biomeList, json) -> {
+        final List<String> nameRegexes = JsonResult.forInput(json)
+                .mapEachIfArray(String.class, (Result.SimpleMapper<String, String>) String::toLowerCase)
+                .orElse(Collections.emptyList(), LogManager.getLogger()::error, LogManager.getLogger()::warn);
+
+        List<HolderSet<Biome>> orIncludes = new ArrayList<>();
+        List<HolderSet<Biome>> orExcludes = new ArrayList<>();
+        nameRegexes.forEach(tagRegex -> {
+            tagRegex = tagRegex.toLowerCase();
+            final boolean notOperator = usingNotOperator(tagRegex);
+            if (notOperator)
+                tagRegex = tagRegex.substring(1);
+            if (tagRegex.charAt(0) == '#')
+                tagRegex = tagRegex.substring(1);
+
+            (notOperator ? orExcludes : orIncludes).add(new TagsRegexMatchHolderSet<>(DELAYED_BIOME_REGISTRY, tagRegex));
+        });
+
+        if (!orIncludes.isEmpty())
+            biomeList.getIncludeComponents().add(new OrHolderSet<>(orIncludes));
+        if (!orExcludes.isEmpty())
+            biomeList.getExcludeComponents().add(new OrHolderSet<>(orExcludes));
+    };
+
     private final VoidApplier<DTBiomeHolderSet, JsonObject> andOperator =
             (biomes, jsonObject) -> applyAllAppliers(jsonObject, biomes);
 
     private final VoidApplier<DTBiomeHolderSet, JsonArray> orOperator = (biomeList, json) -> {
+        List<HolderSet<Biome>> appliedList = new LinkedList<>();
+
         JsonResult.forInput(json)
                 .mapEachIfArray(JsonObject.class, object -> {
                     DTBiomeHolderSet subList = new DTBiomeHolderSet();
                     applyAllAppliers(object, subList);
-                    biomeList.getIncludeComponents().add(subList);
+                    appliedList.add(subList);
                     return object;
                 })
                 .orElse(null, LogManager.getLogger()::error, LogManager.getLogger()::warn);
+
+        if (!appliedList.isEmpty())
+            biomeList.getIncludeComponents().add(new OrHolderSet<>(appliedList));
     };
 
     private final VoidApplier<DTBiomeHolderSet, JsonObject> notOperator = (biomeList, jsonObject) -> {
@@ -109,6 +135,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
         this.appliers
                 .register("tag", String.class, TAG_APPLIER)
                 .registerArrayApplier("tags", String.class, TAG_APPLIER)
+                .register("tags_or", JsonArray.class, TAGS_OR_APPLIER)
                 .register("name", String.class, NAME_APPLIER)
                 .registerArrayApplier("names", String.class, NAME_APPLIER)
                 .register("names_or", JsonArray.class, NAMES_OR_APPLIER)
