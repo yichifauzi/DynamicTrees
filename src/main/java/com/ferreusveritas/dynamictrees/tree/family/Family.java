@@ -25,6 +25,7 @@ import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTItemModelProvider;
 import com.ferreusveritas.dynamictrees.entity.FallingTreeEntity;
 import com.ferreusveritas.dynamictrees.entity.animation.AnimationHandler;
+import com.ferreusveritas.dynamictrees.init.DTConfigs;
 import com.ferreusveritas.dynamictrees.init.DTTrees;
 import com.ferreusveritas.dynamictrees.tree.Resettable;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
@@ -143,6 +144,16 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
      */
     private Supplier<BranchBlock> strippedBranch;
     protected boolean hasStrippedBranch = true;
+    /**
+     * The minimum radius that the branch needs to have to be stripped by an axe
+     * If it's not modified by a tree-pack (null), it uses the value of {@link DTConfigs#MIN_RADIUS_FOR_STRIP}
+     */
+    protected Integer minRadiusForStripping = null;
+    /**
+     * Whether the radius of the branch is reduced by 1 when stripped.
+     * This parameter is ignored if the value of {@link DTConfigs#ENABLE_STRIP_RADIUS_REDUCTION} is set to FALSE.
+     */
+    protected boolean reduceRadiusWhenStripping = true;
     /**
      * The dynamic branch's block item
      */
@@ -673,6 +684,24 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
         this.hasStrippedBranch = hasStrippedBranch;
     }
 
+    public int getMinRadiusForStripping(){
+        if (minRadiusForStripping == null) return DTConfigs.MIN_RADIUS_FOR_STRIP.get();
+        return minRadiusForStripping;
+    }
+    public void setMinRadiusForStripping(int radius){
+        this.minRadiusForStripping = radius;
+    }
+
+    public boolean reduceRadiusWhenStripping() {
+        if (DTConfigs.ENABLE_STRIP_RADIUS_REDUCTION.get())
+            return reduceRadiusWhenStripping;
+        return false;
+    }
+
+    public void setReduceRadiusWhenStripping(boolean reduceRadiusWhenStripping) {
+        this.reduceRadiusWhenStripping = reduceRadiusWhenStripping;
+    }
+
     public void addValidBranches(BranchBlock... branches) {
         this.validBranches.addAll(Arrays.asList(branches));
     }
@@ -937,7 +966,8 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
                 Pair.of("commonSpecies", this.commonSpecies),
                 Pair.of("primitiveLog", this.primitiveLog),
                 Pair.of("primitiveStrippedLog", this.primitiveStrippedLog),
-                Pair.of("stick", this.stick)
+                Pair.of("stick", this.stick),
+                Pair.of("minRadiusForStrip", this.minRadiusForStripping)
         );
     }
 

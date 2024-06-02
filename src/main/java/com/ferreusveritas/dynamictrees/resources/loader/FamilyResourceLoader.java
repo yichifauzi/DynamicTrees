@@ -11,7 +11,6 @@ import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonHelper;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.family.MangroveFamily;
-import com.ferreusveritas.dynamictrees.tree.species.MangroveSpecies;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
@@ -19,8 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.HashMap;
 
 /**
  * @author Harley O'Connor
@@ -66,7 +63,9 @@ public final class FamilyResourceLoader extends JsonRegistryResourceLoader<Famil
                 .register("secondary_thickness", Integer.class, Family::setSecondaryThickness)
                 .register("branch_is_ladder", Boolean.class, Family::setBranchIsLadder)
                 .register("max_signal_depth", Integer.class, Family::setMaxSignalDepth)
-                .register("loot_volume_multiplier", Float.class, Family::setLootVolumeMultiplier);
+                .register("loot_volume_multiplier", Float.class, Family::setLootVolumeMultiplier)
+                .register("min_radius_for_stripping", Integer.class, Family::setMinRadiusForStripping)
+                .register("reduce_radius_when_stripping", Boolean.class, Family::setReduceRadiusWhenStripping);
 
         registerMangroveAppliers();
 
