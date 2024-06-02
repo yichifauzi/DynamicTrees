@@ -118,7 +118,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
             if (tagRegex.charAt(0) == '#')
                 tagRegex = tagRegex.substring(1);
 
-            (notOperator ? orExcludes : orIncludes).add(new TagsRegexMatchHolderSet<>(DELAYED_BIOME_REGISTRY, tagRegex));
+            (notOperator ? orExcludes : orIncludes).add(new TagsRegexMatchHolderSet<>(DELAYED_BIOME_REGISTRY.get().asLookup(), tagRegex));
         });
 
         if (!orIncludes.isEmpty())
