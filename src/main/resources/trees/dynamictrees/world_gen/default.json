@@ -5,10 +5,9 @@
       "tag": "#minecraft:(is_river)|(is_ocean)|(is_beach)"
     },
     "apply": {
-      "density": [
-        1.0
-      ],
-      "chance": 0.02
+      "species" : "null",
+      "density": [ 1.0 ],
+      "chance": 1.0
     }
   },
   {
