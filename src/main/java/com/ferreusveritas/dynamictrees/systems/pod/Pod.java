@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -36,6 +37,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -123,6 +125,8 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
 
     private float minProductionFactor = 0.3F;
 
+    private int dropCount = 1;
+
     private int minRadius = 8;
     private int maxRadius = 8;
 
@@ -191,6 +195,14 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
         this.ageProperty = AgeProperties.getOrCreate(maxAge);
     }
 
+    public int getDropCount() {
+        return dropCount;
+    }
+
+    public void setDropCount(int dropCount) {
+        this.dropCount = dropCount;
+    }
+
     public final VoxelShape getBlockShape(Direction facing, int age) {
         return blockShapeData.getShapeFor(facing, age);
     }
@@ -212,12 +224,12 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
     }
 
     /**
-     * @throws IllegalStateException if the pod does not have an item set
      * @return a copy of this pod's item stack
      */
     public final ItemStack getItemStack() {
         if (itemStack == null) {
-            throw new IllegalStateException("Invoked too early or item was not set on \"" + getRegistryName() + "\".");
+            LogManager.getLogger().warn("Invoked too early or item was not set on \"" + getRegistryName() + "\".");
+            return new ItemStack(Items.AIR);
         }
         return itemStack.copy();
     }
@@ -352,7 +364,7 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
     }
 
     public LootTable.Builder createBlockDrops() {
-        return DTLootTableProvider.createPodDrops(block.get(), itemStack.getItem(), ageProperty, maxAge);
+        return DTLootTableProvider.createPodDrops(block.get(), itemStack.getItem(), ageProperty, maxAge, getDropCount());
     }
 
     public void setMaxRadius(int maxRadius) {

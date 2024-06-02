@@ -286,12 +286,12 @@ public class DTLootTableProvider extends LootTableProvider {
         ).apply(ApplyExplosionDecay.explosionDecay()).setParamSet(LootContextParamSets.BLOCK);
     }
 
-    public static LootTable.Builder createPodDrops(Block podBlock, Item podItem, IntegerProperty ageProperty, int matureAge) {
+    public static LootTable.Builder createPodDrops(Block podBlock, Item podItem, IntegerProperty ageProperty, int matureAge, int dropCount) {
         return LootTable.lootTable().withPool(
                 LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(
                         LootItem.lootTableItem(podItem)
                                 .apply(
-                                        SetItemCountFunction.setCount(ConstantValue.exactly(3))
+                                        SetItemCountFunction.setCount(ConstantValue.exactly(dropCount))
                                                 .when(
                                                         LootItemBlockStatePropertyCondition.hasBlockStateProperties(podBlock)
                                                                 .setProperties(
