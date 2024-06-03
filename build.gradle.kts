@@ -195,7 +195,7 @@ publishing {
 
             pom {
                 name.set(modName)
-                url.set("https://github.com/ferreusveritas/$modName")
+                url.set("https://github.com/DynamicTreesTeam/$modName")
                 licenses {
                     license {
                         name.set("MIT")
@@ -218,9 +218,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/ferreusveritas/$modName.git")
-                    developerConnection.set("scm:git:ssh://github.com/ferreusveritas/$modName.git")
-                    url.set("https://github.com/ferreusveritas/$modName")
+                    connection.set("scm:git:git://github.com/DynamicTreesTeam/$modName.git")
+                    developerConnection.set("scm:git:ssh://github.com/DynamicTreesTeam/$modName.git")
+                    url.set("https://github.com/DynamicTreesTeam/$modName")
                 }
             }
 
