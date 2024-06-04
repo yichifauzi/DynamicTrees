@@ -1,4 +1,4 @@
 {
   "primitive_soil": "mud",
-  "acceptable_soils": [ "mud_like" ]
+  "acceptable_soils": [ "mud_like", "dirt_like" ]
 }
