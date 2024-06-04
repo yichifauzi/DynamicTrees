@@ -1,8 +1,9 @@
 package com.ferreusveritas.dynamictrees.util;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-public class RandomXOR extends LegacyRandomSource {
+import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandomSource;
+
+public class RandomXOR extends ThreadSafeLegacyRandomSource {
 
     private static final long serialVersionUID = -3477272122511092632L;
 
