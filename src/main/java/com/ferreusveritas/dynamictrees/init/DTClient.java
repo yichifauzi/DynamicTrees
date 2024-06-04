@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,7 +58,7 @@ import java.util.stream.Collectors;
 public class DTClient {
 
     //TODO: thick ring stitching
-    public static void clientStart() {
+//    public static void clientStart() {
 //		FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.NORMAL, false, ColorHandlerEvent.Block.class, setupEvent -> {
 //			IResourceManager manager = Minecraft.getInstance().getResourceManager();
 //			if (manager instanceof IReloadableResourceManager){
@@ -65,20 +66,29 @@ public class DTClient {
 //				((IReloadableResourceManager) manager).addReloadListener(ThickRingTextureManager.uploader);
 //			}
 //		});
-    }
+//    }
+
+//    public static void registerClientEventHandlers() {
+    //        MinecraftForge.EVENT_BUS.register(new ModelBakeEventListener());
+    //        MinecraftForge.EVENT_BUS.register(TextureGenerationHandler.class);
+//    }
 
     public static void setup() {
-
         registerRenderLayers();
-        registerJsonColorMultipliers();
-
-
         registerColorHandlers();
-//		MinecraftForge.EVENT_BUS.register(BlockBreakAnimationClientHandler.instance);
-
         LeavesProperties.postInitClient();
-        cleanup();
+        BlockColorMultipliers.cleanUp();
     }
+
+    @SubscribeEvent
+    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(DTRegistries.FALLING_TREE.get(), FallingTreeRenderer::new);
+        event.registerEntityRenderer(DTRegistries.LINGERING_EFFECTOR.get(), LingeringEffectorRenderer::new);
+    }
+
+    ///////////////////////////////////////////
+    // COLOR HANDLING
+    ///////////////////////////////////////////
 
     @OnlyIn(Dist.CLIENT)
     public static void discoverWoodColors() {
@@ -120,11 +130,19 @@ public class DTClient {
         return center.averageColor();
     }
 
-    private static void cleanup() {
-        BlockColorMultipliers.cleanUp();
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void registerColorHandlersEvent(RegisterColorHandlersEvent event){
+        registerJsonColorMultipliers();
     }
 
-    private static boolean isValid(BlockGetter level, BlockPos pos) {
+    private static void registerJsonColorMultipliers() {
+        // Register programmable custom block color providers for LeavesPropertiesJson
+        BlockColorMultipliers.register("birch", (state, level, pos, tintIndex) -> FoliageColor.getBirchColor());
+        BlockColorMultipliers.register("spruce", (state, level, pos, tintIndex) -> FoliageColor.getEvergreenColor());
+    }
+
+    private static boolean isValidPos(BlockGetter level, BlockPos pos) {
         return level != null && pos != null;
     }
 
@@ -151,7 +169,7 @@ public class DTClient {
         }
 
         // Register Bonsai Pot Colorizer
-        ModelHelper.regColorHandler(DTRegistries.POTTED_SAPLING.get(), (state, level, pos, tintIndex) -> isValid(level, pos) && (state.getBlock() instanceof PottedSaplingBlock)
+        ModelHelper.regColorHandler(DTRegistries.POTTED_SAPLING.get(), (state, level, pos, tintIndex) -> isValidPos(level, pos) && (state.getBlock() instanceof PottedSaplingBlock)
                 ? DTRegistries.POTTED_SAPLING.get().getSpecies(level, pos).saplingColorMultiplier(state, level, pos, tintIndex) : white);
 
         // ITEMS
@@ -168,7 +186,7 @@ public class DTClient {
         for (Species species : Species.REGISTRY) {
             if (species.getSapling().isPresent()) {
                 ModelHelper.regColorHandler(species.getSapling().get(), (state, level, pos, tintIndex) ->
-                        isValid(level, pos) ? species.saplingColorMultiplier(state, level, pos, tintIndex) : white);
+                        isValidPos(level, pos) ? species.saplingColorMultiplier(state, level, pos, tintIndex) : white);
             }
         }
 
@@ -181,27 +199,6 @@ public class DTClient {
             );
         }
 
-    }
-
-    private static void registerJsonColorMultipliers() {
-        // Register programmable custom block color providers for LeavesPropertiesJson
-        BlockColorMultipliers.register("birch", (state, level, pos, tintIndex) -> FoliageColor.getBirchColor());
-        BlockColorMultipliers.register("spruce", (state, level, pos, tintIndex) -> FoliageColor.getEvergreenColor());
-    }
-
-    public static void registerClientEventHandlers() {
-        //        MinecraftForge.EVENT_BUS.register(new ModelBakeEventListener());
-        //        MinecraftForge.EVENT_BUS.register(TextureGenerationHandler.class);
-    }
-
-    @SubscribeEvent
-    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(DTRegistries.FALLING_TREE.get(), FallingTreeRenderer::new);
-        event.registerEntityRenderer(DTRegistries.LINGERING_EFFECTOR.get(), LingeringEffectorRenderer::new);
-    }
-
-    private static int getFoliageColor(LeavesProperties leavesProperties, Level level, BlockState blockState, BlockPos pos) {
-        return leavesProperties.foliageColorMultiplier(blockState, level, pos);
     }
 
     ///////////////////////////////////////////
@@ -238,6 +235,9 @@ public class DTClient {
         }
     }
 
+    private static int getFoliageColor(LeavesProperties leavesProperties, Level level, BlockState blockState, BlockPos pos) {
+        return leavesProperties.foliageColorMultiplier(blockState, level, pos);
+    }
     public static void crushLeavesBlock(Level level, BlockPos pos, BlockState blockState, Entity entity) {
         if (level.isClientSide) {
             RandomSource random = level.random;
