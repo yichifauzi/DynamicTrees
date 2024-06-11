@@ -64,7 +64,7 @@ public class DynamicLeavesBlock extends LeavesBlock implements TreePart, Ageable
     public LeavesProperties properties = LeavesProperties.NULL;
 
     public DynamicLeavesBlock(final LeavesProperties leavesProperties, final Properties properties) {
-        this(properties);
+        this(properties.forceSolidOn());
         this.setProperties(leavesProperties);
         leavesProperties.setDynamicLeavesState(defaultBlockState());
     }
