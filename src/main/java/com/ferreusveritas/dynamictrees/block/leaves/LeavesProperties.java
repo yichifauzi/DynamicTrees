@@ -560,7 +560,8 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
                 .noOcclusion()
                 .isValidSpawn((s, r, p, e) -> e == EntityType.OCELOT || e == EntityType.PARROT)
                 .isSuffocating((s, r, p) -> false)
-                .isViewBlocking((s, r, p) -> false);
+                .isViewBlocking((s, r, p) -> false)
+                .forceSolidOn();
     }
 
     ///////////////////////////////////////////
