@@ -1,0 +1,44 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev' version '0.1.114'
+    id 'com.matyrobbrt.mc.registrationutils' version "${regutils_version}"
+}
+
+
+neoForge {
+    // Look for versions on https://projects.neoforged.net/neoforged/neoform
+    neoFormVersion = "1.21-20240613.152323"
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.add(at.absolutePath)
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+}
+repositories {
+    maven { url "https://maven.fabricmc.net/" }
+}
+dependencies {
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${project.forge_config_api_port_version}"
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}
+
