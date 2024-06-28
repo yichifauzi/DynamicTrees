@@ -5,25 +5,12 @@
   "sortnum": 2,
   "pages": [
     {
-      "type": "brewing",
+      "type": "dynamictrees:brewing",
       "title": "Potion of Depletion",
       "ingredient": "minecraft:slime_ball",
       "bottle": "dynamictrees:dendro_potion",
       "output": "dynamictrees:dendro_potion{potion_index:1}",
-      "text": "This potion depletes the soil and causes the tree to stop growing."
-    },
-    {
-      "type": "relations",
-      "title": "Relations",
-      "entries": [
-        "potions/base_potion",
-        "potions/burgeoning_potion",
-        "potions/fertility_potion",
-        "potions/gigas_potion",
-        "potions/persistance_potion",
-        "potions/base_transformation_potion",
-        "potions/transformation_potion"
-      ]
+      "text": "This potion depletes the soil and causes the tree to stop growing.$(br2)Useful to decorate with smaller trees."
     }
   ]
 } 
