@@ -5,25 +5,20 @@
   "sortnum": 5,
   "pages": [
     {
-      "type": "brewing",
+      "type": "dynamictrees:brewing",
       "title": "Potion of Gigas",
       "ingredient": "minecraft:pumpkin_seeds",
       "bottle": "dynamictrees:dendro_potion",
       "output": "dynamictrees:dendro_potion{potion_index:2}",
-      "text": "This potion changes the tree species to its mega equivalent. Note that this only works on trees that have mega variants - spruce and jungle only by default."
+      "text": "Makes the tree grow to a gigantic size. Note that this only works on trees that have mega variants - spruce and jungle by default.$(br1)This is the equivalent of placing saplings in a 2x2 pattern."
     },
     {
-      "type": "relations",
-      "title": "Relations",
-      "entries": [
-        "potions/base_potion",
-        "potions/burgeoning_potion",
-        "potions/depletion_potion",
-        "potions/fertility_potion",
-        "potions/persistance_potion",
-        "potions/base_transformation_potion",
-        "potions/transformation_potion"
-      ]
+      "type": "image",
+      "images": [
+        "dynamictrees:textures/patchouli/images/mega_spruce.png"
+      ],
+      "text": "A regular spruce tree next to a fully grown mega spruce tree.",
+      "border": true
     }
   ]
 } 

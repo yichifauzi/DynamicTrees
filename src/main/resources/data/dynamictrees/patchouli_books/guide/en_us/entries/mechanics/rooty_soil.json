@@ -8,11 +8,15 @@
     {
       "type": "text",
       "title": "Rooty Soil",
-      "text": "- Provides nutrients to trees and can be depleted over time.$(br2)- Applied with bone meal will increase soil fertility and allows the tree to grow past its mature state.$(br2)- Applied with various brewed potions for different effects."
+      "text": "- Provides nutrients to trees and can be depleted over time.$(br2)- Applying bone meal will increase soil fertility and allows the tree to grow past its mature state.$(br2)- Comparators can be used to sense soil fertility level."
     },
     {
-      "type": "text",
-      "text": "- Special effect particles are created on the entire tree when an acting substance is applied to the soil or bottom-most trunk block.$(br2)- Comparators can be used to sense soil fertility level."
+      "type": "image",
+      "images": [
+        "dynamictrees:textures/patchouli/images/rooty_soil.png"
+      ],
+      "text": "Rooty grass block of a birch tree.",
+      "border": true
     }
   ]
 } 
