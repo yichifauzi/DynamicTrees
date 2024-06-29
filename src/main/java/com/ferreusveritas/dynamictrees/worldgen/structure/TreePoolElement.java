@@ -103,22 +103,7 @@ public final class TreePoolElement extends StructurePoolElement {
     @Override
     public boolean place(StructureTemplateManager structureManager, WorldGenLevel level, StructureManager structureFeatureManager, ChunkGenerator chunkGenerator, BlockPos pos, BlockPos p_210488_,
             Rotation rotation, BoundingBox box, RandomSource random, boolean keepJigsaws) {
-        final Seed seed = species.getSeed().orElse(null);
-        if (seed == null) {
-            return false;
-        }
-
-        final ItemStack seedStack = new ItemStack(seed);
-        final CompoundTag tag = new CompoundTag();
-        tag.putBoolean(Seed.FORCE_PLANT_KEY, true);
-        tag.putInt(Seed.CODE_KEY, random.nextInt(7) + 2);
-        tag.putInt(Seed.LIFESPAN_KEY, 0);
-        seedStack.setTag(tag);
-
-        final int posX = pos.getX() + getOffsetX(rotation);
-        final int posY = pos.getY() + getOffsetY(rotation);
-        final int posZ = pos.getZ() + getOffsetZ(rotation);
-        level.addFreshEntity(new ItemEntity(level.getLevel(), posX, posY, posZ, seedStack));
+        species.plantSapling(level, pos, true);
         return true;
     }
 
