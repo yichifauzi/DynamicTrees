@@ -18,6 +18,18 @@
       "anchor": "dirt_bucket",
       "recipe": "dynamictrees:dirt_bucket",
       "text": "To obtain a dirt bucket simply combine a dirt block with a bucket.$(br2)Right click on the ground with the bucket to empty it, if you need to."
+    },
+    {
+      "type": "crafting",
+      "title": "Seeds to Saplings",
+      "recipe": "dynamictrees:oak_seed_to_minecraft_oak_sapling",
+      "recipe2": "dynamictrees:minecraft_oak_sapling_to_oak_seed"
+    },
+    {
+      "type": "crafting",
+      "title": "Fruit to Seeds",
+      "recipe": "dynamictrees:minecraft_apple_to_apple_oak_seed",
+      "text": "Fruit trees do not drop their seeds, instead you can get them from the fruit."
     }
   ]
 } 
