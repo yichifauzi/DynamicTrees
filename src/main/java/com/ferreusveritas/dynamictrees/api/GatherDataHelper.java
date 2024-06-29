@@ -27,7 +27,6 @@ public final class GatherDataHelper {
         gatherBlockStateAndModelData(modId, event, registries);
         gatherItemModelData(modId, event, registries);
         gatherLootData(modId, event);
-        gatherDatapackData(modId, event);
     }
 
     public static void gatherTagData(final String modId, final GatherDataEvent event) {
@@ -56,11 +55,6 @@ public final class GatherDataHelper {
         event.getGenerator().addProvider(event.includeServer(), new DTLootTableProvider(
                 event.getGenerator().getPackOutput(), modId, event.getExistingFileHelper()
         ));
-    }
-
-    public static void gatherDatapackData(final String modId, final GatherDataEvent event) {
-        event.getGenerator().addProvider(event.includeServer(), new DTDatapackBuiltinEntriesProvider(
-                event.getGenerator().getPackOutput(), event.getLookupProvider(), Set.of(modId, DynamicTrees.MINECRAFT)));
     }
 
 }

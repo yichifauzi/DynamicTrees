@@ -6,6 +6,7 @@ import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
 import com.ferreusveritas.dynamictrees.command.DTArgumentTypes;
 import com.ferreusveritas.dynamictrees.compat.CompatHandler;
+import com.ferreusveritas.dynamictrees.data.provider.DTDatapackBuiltinEntriesProvider;
 import com.ferreusveritas.dynamictrees.event.handler.EventHandlers;
 import com.ferreusveritas.dynamictrees.init.DTClient;
 import com.ferreusveritas.dynamictrees.init.DTConfigs;
@@ -18,6 +19,7 @@ import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.CommonSetup;
 import com.ferreusveritas.dynamictrees.worldgen.DynamicTreeFeature;
 import com.ferreusveritas.dynamictrees.worldgen.structure.VillageTreeReplacement;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -27,6 +29,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import java.util.Set;
 
 @Mod(DynamicTrees.MOD_ID)
 public final class DynamicTrees {
@@ -103,15 +107,19 @@ public final class DynamicTrees {
     }
 
     private void gatherData(final GatherDataEvent event) {
+        //Generate the tree block and item data
         Resources.MANAGER.gatherData();
-        GatherDataHelper.gatherAllData(
-                MOD_ID,
-                event,
+        GatherDataHelper.gatherAllData( MOD_ID, event,
                 SoilProperties.REGISTRY,
                 Family.REGISTRY,
                 Species.REGISTRY,
                 LeavesProperties.REGISTRY
         );
+        //Generate the feature replacement data
+        DataGenerator dataGen = event.getGenerator();
+        dataGen.addProvider(event.includeServer(), new DTDatapackBuiltinEntriesProvider(
+                dataGen.getPackOutput(), event.getLookupProvider(), Set.of(DynamicTrees.MOD_ID, DynamicTrees.MINECRAFT)
+        ));
     }
 
     public static ResourceLocation location(final String path) {
