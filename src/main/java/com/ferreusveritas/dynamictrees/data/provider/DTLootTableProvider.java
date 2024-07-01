@@ -1,5 +1,6 @@
 package com.ferreusveritas.dynamictrees.data.provider;
 
+import com.ferreusveritas.dynamictrees.api.registry.RegistryEvent;
 import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
 import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.loot.DTLootParameterSets;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
@@ -53,9 +55,8 @@ import java.util.function.BiConsumer;
 public class DTLootTableProvider extends LootTableProvider {
     private static final LootItemCondition.Builder HAS_SILK_TOUCH = MatchTool.toolMatches(ItemPredicate.Builder.item()
             .hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, MinMaxBounds.Ints.atLeast(1))));
-    private static final LootItemCondition.Builder HAS_NO_SILK_TOUCH = HAS_SILK_TOUCH.invert();
-    private static final LootItemCondition.Builder HAS_SHEARS =
-            MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS));
+    private static final LootItemCondition.Builder HAS_SHEARS = MatchTool.toolMatches(ItemPredicate.Builder.item()
+            .of(Items.SHEARS));
     private static final LootItemCondition.Builder HAS_SHEARS_OR_SILK_TOUCH = HAS_SHEARS.or(HAS_SILK_TOUCH);
     private static final LootItemCondition.Builder HAS_NO_SHEARS_OR_SILK_TOUCH = HAS_SHEARS_OR_SILK_TOUCH.invert();
 
@@ -95,6 +96,8 @@ public class DTLootTableProvider extends LootTableProvider {
 
             Fruit.REGISTRY.dataGenerationStream(modId).forEach(this::addFruitBlockTable);
             Pod.REGISTRY.dataGenerationStream(modId).forEach(this::addPodBlockTable);
+
+            ModLoader.get().postEvent(new DataGenerationStreamEvent(this, modId, existingFileHelper, map));
         }
 
         @Override
