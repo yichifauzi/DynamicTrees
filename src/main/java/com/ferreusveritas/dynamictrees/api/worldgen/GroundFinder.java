@@ -1,6 +1,7 @@
 package com.ferreusveritas.dynamictrees.api.worldgen;
 
 import com.ferreusveritas.dynamictrees.worldgen.OverworldGroundFinder;
+import com.ferreusveritas.dynamictrees.worldgen.SurfaceGroundFinder;
 import com.ferreusveritas.dynamictrees.worldgen.SubterraneanGroundFinder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -21,11 +22,12 @@ import java.util.Map;
 public interface GroundFinder {
 
     GroundFinder OVERWORLD = new OverworldGroundFinder();
+    GroundFinder SURFACE = new SurfaceGroundFinder();
     GroundFinder SUBTERRANEAN = new SubterraneanGroundFinder();
 
     /**
      * If this is not set manually, the ground finder returned will be {@link #SUBTERRANEAN} if {@link DimensionType#hasCeiling()}
-     * returns {@code true} or {@link #OVERWORLD} if {@code false}.
+     * returns {@code true} or {@link #SURFACE} if {@code false}.
      */
     Map<ResourceKey<Level>, GroundFinder> GROUND_FINDERS = new HashMap<>();
 

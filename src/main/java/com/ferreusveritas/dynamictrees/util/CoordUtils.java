@@ -324,6 +324,10 @@ public final class CoordUtils {
         );
     }
 
+    public static boolean inRange(final BlockPos pos, final int minY, final int maxY) {
+        return pos.getY() >= minY && pos.getY() <= maxY;
+    }
+
     //Some ready made not terrible prime hash factors
     private static final int[][] coordHashMap = {
             {4111, 271, 3067},
