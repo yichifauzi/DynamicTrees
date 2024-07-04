@@ -27,10 +27,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.ApplyExplosionDecay;
+import net.minecraft.world.level.storage.loot.functions.LimitCount;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -40,6 +44,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.ModLoader;
@@ -267,36 +272,33 @@ public class DTLootTableProvider extends LootTableProvider {
             ).setParamSet(DTLootParameterSets.BRANCHES);
         }
 
-        public static LootTable.Builder createFruitDrops(Block fruitBlock, Item fruitItem, IntegerProperty ageProperty, int matureAge) {
-            return LootTable.lootTable().withPool(
-                    LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(
-                            LootItem.lootTableItem(fruitItem)
-                                    .when(
-                                            LootItemBlockStatePropertyCondition.hasBlockStateProperties(fruitBlock)
-                                                    .setProperties(
-                                                            StatePropertiesPredicate.Builder.properties()
-                                                                    .hasProperty(ageProperty, matureAge)
-                                                    )
-                                    )
-                    )
-            ).apply(ApplyExplosionDecay.explosionDecay()).setParamSet(LootContextParamSets.BLOCK);
+        public static LootTable.Builder createFruitPodDrops(Block fruitBlock, Item fruitItem, IntegerProperty ageProperty, int matureAge, int count) {
+            return createFruitPodDrops(fruitBlock, fruitItem, ageProperty, matureAge, count, count);
         }
-
-        public static LootTable.Builder createPodDrops(Block podBlock, Item podItem, IntegerProperty ageProperty, int matureAge, int dropCount) {
+        public static LootTable.Builder createFruitPodDrops(Block fruitBlock, Item fruitItem, IntegerProperty ageProperty, int matureAge, int countMin, int countMax) {
+            //Select a number provider depending on the range.
+            // If both numbers are the same then use a constant value, otherwise use an uniform range.
+            NumberProvider numberProvider = (countMin == countMax) ?
+                    ConstantValue.exactly(countMax) :
+                    UniformGenerator.between(countMin, countMax);
+            //Apply the count to the item builder only if it's not just 1.
+            LootPoolSingletonContainer.Builder<?> itemBuilder = LootItem.lootTableItem(fruitItem);
+            if (!(countMin == countMax && countMax == 1)){
+                itemBuilder.apply(SetItemCountFunction.setCount(numberProvider));
+                //If the min count is negative, then cap it up to 0.
+                if (countMin < 0)
+                    itemBuilder.apply(LimitCount.limitCount(IntRange.lowerBound(0)));
+            }
+            //finally, return the table builder
             return LootTable.lootTable().withPool(
                     LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(
-                            LootItem.lootTableItem(podItem)
-                                    .apply(
-                                            SetItemCountFunction.setCount(ConstantValue.exactly(dropCount))
-                                                    .when(
-                                                            LootItemBlockStatePropertyCondition.hasBlockStateProperties(podBlock)
-                                                                    .setProperties(
-                                                                            StatePropertiesPredicate.Builder.properties()
-                                                                                    .hasProperty(ageProperty, matureAge)
-                                                                    )
-                                                    )
-                                    )
+                            itemBuilder
                                     .apply(ApplyExplosionDecay.explosionDecay())
+                                    .when(LootItemBlockStatePropertyCondition
+                                            .hasBlockStateProperties(fruitBlock)
+                                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                    .hasProperty(ageProperty, matureAge))
+                                    )
                     )
             ).setParamSet(LootContextParamSets.BLOCK);
         }

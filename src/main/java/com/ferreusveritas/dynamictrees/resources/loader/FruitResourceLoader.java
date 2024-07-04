@@ -36,7 +36,11 @@ public final class FruitResourceLoader extends JsonRegistryResourceLoader<Fruit>
         );
 
         // Item is needed on datagen and setup
-        this.gatherDataAppliers.register("item_stack", Item.class, (fruit, item) -> fruit.setItemStack(new ItemStack(item)));
+        this.gatherDataAppliers
+                .register("item_stack", Item.class, (fruit, item) -> fruit.setItemStack(new ItemStack(item)))
+                .register("drop_count", Integer.class, Fruit::setDropCount)
+                .register("min_drop_count", Integer.class, Fruit::setMinDropCount)
+                .register("max_drop_count", Integer.class, Fruit::setMaxDropCount);
         this.setupAppliers.register("item_stack", Item.class, (fruit, item) -> fruit.setItemStack(new ItemStack(item)));
 
         this.reloadAppliers

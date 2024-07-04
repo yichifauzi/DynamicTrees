@@ -92,6 +92,9 @@ public class Fruit extends RegistryEntry<Fruit> implements Resettable<Fruit> {
 
     private GrowableBlock.MatureAction matureAction = GrowableBlock.MatureAction.DEFAULT;
 
+    private int minDropCount = 1;
+    private int maxDropCount = 1;
+
     public Fruit(ResourceLocation registryName) {
         super(registryName);
     }
@@ -149,6 +152,17 @@ public class Fruit extends RegistryEntry<Fruit> implements Resettable<Fruit> {
     public void setMaxAge(int maxAge) {
         this.maxAge = maxAge;
         this.ageProperty = AgeProperties.getOrCreate(maxAge);
+    }
+
+    public void setDropCount(int dropCount) {
+        setMaxDropCount(dropCount);
+        setMinDropCount(dropCount);
+    }
+    public void setMaxDropCount(int maxDropCount) {
+        this.maxDropCount = maxDropCount;
+    }
+    public void setMinDropCount(int minDropCount) {
+        this.minDropCount = minDropCount;
     }
 
     public final VoxelShape getBlockShape(int age) {
@@ -309,7 +323,9 @@ public class Fruit extends RegistryEntry<Fruit> implements Resettable<Fruit> {
     }
 
     public LootTable.Builder createBlockDrops() {
-        return DTLootTableProvider.BlockLoot.createFruitDrops(block.get(), getItemStack().getItem(), ageProperty, maxAge);
+        if (minDropCount > maxDropCount || maxDropCount <= 0)
+            throw new IllegalArgumentException("Attempted to create loot tables for "+getRegistryName()+" with an invalid drop count range ["+minDropCount+","+maxDropCount+"].");
+        return DTLootTableProvider.BlockLoot.createFruitPodDrops(block.get(), getItemStack().getItem(), ageProperty, maxAge, minDropCount, maxDropCount);
     }
 
     @Nonnull

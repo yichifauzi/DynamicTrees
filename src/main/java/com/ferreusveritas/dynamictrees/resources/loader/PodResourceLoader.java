@@ -6,6 +6,7 @@ import com.ferreusveritas.dynamictrees.block.GrowableBlock;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonDeserialisers;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonHelper;
 import com.ferreusveritas.dynamictrees.deserialisation.ResourceLocationDeserialiser;
+import com.ferreusveritas.dynamictrees.systems.fruit.Fruit;
 import com.ferreusveritas.dynamictrees.systems.pod.Pod;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.Null;
@@ -45,7 +46,9 @@ public final class PodResourceLoader extends JsonRegistryResourceLoader<Pod> {
         // Item is needed on datagen and setup
         this.gatherDataAppliers
                 .register("item_stack", Item.class, (pod, item) -> pod.setItemStack(new ItemStack(item)))
-                .register("drop_count", Integer.class, Pod::setDropCount);
+                .register("drop_count", Integer.class, Pod::setDropCount)
+                .register("min_drop_count", Integer.class, Pod::setMinDropCount)
+                .register("max_drop_count", Integer.class, Pod::setMaxDropCount);
         this.setupAppliers.register("item_stack", Item.class, (pod, item) -> pod.setItemStack(new ItemStack(item)));
 
         this.reloadAppliers

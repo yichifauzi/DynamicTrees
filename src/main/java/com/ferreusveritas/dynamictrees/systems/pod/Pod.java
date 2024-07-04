@@ -125,7 +125,8 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
 
     private float minProductionFactor = 0.3F;
 
-    private int dropCount = 1;
+    private int maxDropCount = 1;
+    private int minDropCount = 1;
 
     private int minRadius = 8;
     private int maxRadius = 8;
@@ -194,12 +195,15 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
         this.ageProperty = AgeProperties.getOrCreate(maxAge);
     }
 
-    public int getDropCount() {
-        return dropCount;
-    }
-
     public void setDropCount(int dropCount) {
-        this.dropCount = dropCount;
+        setMaxDropCount(dropCount);
+        setMinDropCount(dropCount);
+    }
+    public void setMinDropCount(int minDropCount) {
+        this.minDropCount = minDropCount;
+    }
+    public void setMaxDropCount(int maxDropCount) {
+        this.maxDropCount = maxDropCount;
     }
 
     public final VoxelShape getBlockShape(Direction facing, int age) {
@@ -363,7 +367,9 @@ public class Pod extends RegistryEntry<Pod> implements Resettable<Pod> {
     }
 
     public LootTable.Builder createBlockDrops() {
-        return DTLootTableProvider.BlockLoot.createPodDrops(block.get(), itemStack.getItem(), ageProperty, maxAge, getDropCount());
+        if (minDropCount > maxDropCount || maxDropCount <= 0)
+            throw new IllegalArgumentException("Attempted to create loot tables for "+getRegistryName()+" with an invalid drop count range ["+minDropCount+","+maxDropCount+"].");
+        return DTLootTableProvider.BlockLoot.createFruitPodDrops(block.get(), itemStack.getItem(), ageProperty, maxAge, minDropCount, maxDropCount);
     }
 
     public void setMaxRadius(int maxRadius) {

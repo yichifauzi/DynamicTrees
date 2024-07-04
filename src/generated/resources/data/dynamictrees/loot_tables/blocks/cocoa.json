@@ -6,21 +6,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
+          "conditions": [
             {
-              "add": false,
-              "conditions": [
-                {
-                  "block": "dynamictrees:cocoa",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "age": "2"
-                  }
-                }
-              ],
-              "count": 1.0,
-              "function": "minecraft:set_count"
-            },
+              "block": "dynamictrees:cocoa",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "age": "2"
+              }
+            }
+          ],
+          "functions": [
             {
               "function": "minecraft:explosion_decay"
             }
