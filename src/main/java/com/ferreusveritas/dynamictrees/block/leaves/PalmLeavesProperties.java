@@ -1,11 +1,18 @@
 package com.ferreusveritas.dynamictrees.block.leaves;
 
+import com.ferreusveritas.dynamictrees.DynamicTrees;
+import com.ferreusveritas.dynamictrees.api.data.Generator;
+import com.ferreusveritas.dynamictrees.api.data.PalmLeavesStateGenerator;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
+import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTLootTableProvider;
+import com.ferreusveritas.dynamictrees.data.provider.PalmLeavesLoaderBuilder;
+import com.ferreusveritas.dynamictrees.event.handler.BakedModelEventHandler;
 import com.ferreusveritas.dynamictrees.loot.DTLootParameterSets;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
+import com.ferreusveritas.dynamictrees.util.MutableLazyValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +31,11 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 public class PalmLeavesProperties extends LeavesProperties {
 
@@ -36,6 +48,60 @@ public class PalmLeavesProperties extends LeavesProperties {
     @Override
     protected DynamicLeavesBlock createDynamicLeaves(BlockBehaviour.Properties properties) {
         return new DynamicPalmLeavesBlock(this, properties);
+    }
+
+    protected final MutableLazyValue<Generator<DTBlockStateProvider, LeavesProperties>> palmStateGenerator =
+            MutableLazyValue.supplied(PalmLeavesStateGenerator::new);
+
+    @Override
+    public void generateStateData(DTBlockStateProvider provider) {
+        // Generate leaves block state and model.
+        this.palmStateGenerator.get().generate(provider, this);
+    }
+
+    public String getFrondsModelName(){
+        return "block/palm_leaves/" + getRegistryName().getPath() + "_frond";
+    }
+    public String getCoreTopModelName(){
+        return "block/palm_leaves/" + getRegistryName().getPath() + "_core_top";
+    }
+    public String getCoreBottomModelName(){
+        return "block/palm_leaves/" + getRegistryName().getPath() + "_core_bottom";
+    }
+
+    public static final String FROND = "frond";
+    public static final String CORE_TOP = "core_top";
+    public static final String CORE_BOTTOM = "core_bottom";
+    public void addFrondTextures(BiConsumer<String, ResourceLocation> textureConsumer, ResourceLocation leavesTextureLocation) {
+        ResourceLocation leavesLoc = getTexturePath(FROND).orElse(leavesTextureLocation);
+        textureConsumer.accept("frond", leavesLoc);
+    }
+
+    public void addCoreTextures(BiConsumer<String, ResourceLocation> textureConsumer,
+                                   ResourceLocation coreTextureLocation) {
+        ResourceLocation coreLoc = getTexturePath(CORE_BOTTOM).orElse(coreTextureLocation);
+        textureConsumer.accept("core_bottom", coreLoc);
+    }
+
+    ResourceLocation frondLoader = BakedModelEventHandler.LARGE_PALM_FRONDS;
+    public void setFrondLoader(ResourceLocation frondLoader) {
+        this.frondLoader = frondLoader;
+    }
+
+    /**
+     * @return a constructor for the relevant branch block model builder for the corresponding loader
+     */
+    public BiFunction<BlockModelBuilder, ExistingFileHelper, PalmLeavesLoaderBuilder> getFrondsLoaderConstructor() {
+        return (b,e)->PalmLeavesLoaderBuilder.fronds(frondLoader, b,e);
+    }
+
+    public ResourceLocation getCoreTopSmartModelLocation() {
+        if (modelOverrides.containsKey(CORE_TOP)) return modelOverrides.get(CORE_TOP);
+        return DynamicTrees.location("block/smartmodel/palm/core_top");
+    }
+    public ResourceLocation getCoreBottomSmartModelLocation() {
+        if (modelOverrides.containsKey(CORE_BOTTOM)) return modelOverrides.get(CORE_BOTTOM);
+        return DynamicTrees.location("block/smartmodel/palm/core_bottom");
     }
 
     public static class DynamicPalmLeavesBlock extends DynamicLeavesBlock {
@@ -118,6 +184,11 @@ public class PalmLeavesProperties extends LeavesProperties {
         }
 
     }
+
+//    @Override
+//    protected String getBlockRegistryNameSuffix() {
+//        return "_fronds";
+//    }
 
     @Override
     public LootTable.Builder createBlockDrops() {

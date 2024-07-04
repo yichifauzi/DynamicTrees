@@ -7,6 +7,7 @@ import com.ferreusveritas.dynamictrees.api.applier.PropertyApplierResult;
 import com.ferreusveritas.dynamictrees.api.cell.CellKit;
 import com.ferreusveritas.dynamictrees.api.resource.loading.preparation.JsonRegistryResourceLoader;
 import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
+import com.ferreusveritas.dynamictrees.block.leaves.PalmLeavesProperties;
 import com.ferreusveritas.dynamictrees.block.leaves.ScruffyLeavesProperties;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonHelper;
 import com.ferreusveritas.dynamictrees.deserialisation.ResourceLocationDeserialiser;
@@ -40,7 +41,8 @@ public final class LeavesPropertiesResourceLoader extends JsonRegistryResourceLo
                 .register("primitive_leaves", Block.class, LeavesProperties::setPrimitiveLeaves)
                 .registerListApplier("seed_drop_chances", Float.class, LeavesProperties::setSeedDropChances)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, LeavesProperties::setTextureOverrides)
-                .registerMapApplier("model_overrides", ResourceLocation.class, LeavesProperties::setModelOverrides);
+                .registerMapApplier("model_overrides", ResourceLocation.class, LeavesProperties::setModelOverrides)
+                .register("frond_model_loader", PalmLeavesProperties.class, ResourceLocation.class, PalmLeavesProperties::setFrondLoader);
 
         // Primitive leaves are needed both client and server (so cannot be done on load).
         this.setupAppliers.register("primitive_leaves", Block.class, LeavesProperties::setPrimitiveLeaves)
