@@ -21,6 +21,7 @@ import com.ferreusveritas.dynamictrees.resources.Resources;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.family.MangroveFamily;
 import com.ferreusveritas.dynamictrees.tree.family.NetherFungusFamily;
+import com.ferreusveritas.dynamictrees.tree.family.PalmFamily;
 import com.ferreusveritas.dynamictrees.tree.species.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -74,6 +75,7 @@ public class DTTrees {
     public static void registerFamilyTypes(final TypeRegistryEvent<Family> event) {
         event.registerType(DynamicTrees.location("nether_fungus"), NetherFungusFamily.TYPE);
         event.registerType(DynamicTrees.location("mangrove"), MangroveFamily.TYPE);
+        event.registerType(DynamicTrees.location("palm"), PalmFamily.TYPE);
     }
 
     @SubscribeEvent

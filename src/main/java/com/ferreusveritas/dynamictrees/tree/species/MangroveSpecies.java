@@ -1,6 +1,5 @@
 package com.ferreusveritas.dynamictrees.tree.species;
 
-import com.ferreusveritas.dynamictrees.DynamicTrees;
 import com.ferreusveritas.dynamictrees.api.TreeHelper;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.api.treedata.TreePart;
@@ -67,7 +66,7 @@ public class MangroveSpecies extends Species {
     public MangroveSpecies(ResourceLocation name, Family family, LeavesProperties leavesProperties) {
         super(name, family, leavesProperties);
         if (!(family instanceof MangroveFamily)) {
-            throw new RuntimeException("Family " + family.toString() + " for mangrove species " + name + "is not of type "+ MangroveFamily.class);
+            throw new RuntimeException("Family " + family.getRegistryName() + " for mangrove species " + getRegistryName() + "is not of type "+ MangroveFamily.class);
         }
     }
 

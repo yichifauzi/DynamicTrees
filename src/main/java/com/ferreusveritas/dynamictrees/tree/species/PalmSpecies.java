@@ -11,6 +11,8 @@ import com.ferreusveritas.dynamictrees.growthlogic.GrowthLogicKits;
 import com.ferreusveritas.dynamictrees.systems.genfeature.context.PostGenerationContext;
 import com.ferreusveritas.dynamictrees.systems.nodemapper.FindEndsNode;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
+import com.ferreusveritas.dynamictrees.tree.family.MangroveFamily;
+import com.ferreusveritas.dynamictrees.tree.family.PalmFamily;
 import com.ferreusveritas.dynamictrees.util.BranchDestructionData;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
 import com.ferreusveritas.dynamictrees.util.SafeChunkBounds;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -33,6 +36,11 @@ public class PalmSpecies extends Species {
 
     public PalmSpecies(ResourceLocation name, Family family, LeavesProperties leavesProperties) {
         super(name, family, leavesProperties);
+        if (!(family instanceof MangroveFamily)) {
+            LogManager.getLogger().warn("Family " + family.getRegistryName() + " for palm species " + getRegistryName() + "is not of type "+ PalmFamily.class);
+        }
+        if (!(leavesProperties instanceof PalmLeavesProperties))
+            LogManager.getLogger().warn("LeavesProperties " + leavesProperties.getRegistryName() + " for palm species " + getRegistryName() + "is not of type "+ PalmLeavesProperties.class);
         setGrowthLogicKit(GrowthLogicKits.PALM); //palm growth logic kit by default
     }
 

@@ -6,14 +6,15 @@ import com.ferreusveritas.dynamictrees.api.data.RootsItemModelGenerator;
 import com.ferreusveritas.dynamictrees.api.data.RootsStateGenerator;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
-import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
 import com.ferreusveritas.dynamictrees.block.branch.BasicRootsBlock;
+import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
 import com.ferreusveritas.dynamictrees.block.rooty.AerialRootsSoilProperties;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilHelper;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
 import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTItemModelProvider;
+import com.ferreusveritas.dynamictrees.tree.species.MangroveSpecies;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.MutableLazyValue;
 import com.ferreusveritas.dynamictrees.util.Optionals;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -51,6 +53,14 @@ public class MangroveFamily extends Family {
 
     public MangroveFamily(ResourceLocation name) {
         super(name);
+    }
+
+    @Override
+    public void setCommonSpecies(Species species) {
+        super.setCommonSpecies(species);
+        if (!(species instanceof MangroveSpecies)) {
+            LogManager.getLogger().warn("Common species " + species.getRegistryName() + " for mangrove family " + getRegistryName() + "is not of type "+ MangroveSpecies.class);
+        }
     }
 
     ///////////////////////////////////////////

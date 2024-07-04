@@ -3,6 +3,9 @@ package com.ferreusveritas.dynamictrees.tree.family;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.data.DTItemTags;
+import com.ferreusveritas.dynamictrees.tree.species.NetherFungusSpecies;
+import com.ferreusveritas.dynamictrees.tree.species.PalmSpecies;
+import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.BlockBounds;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +30,13 @@ public class NetherFungusFamily extends Family {
         super(name);
     }
 
+    @Override
+    public void setCommonSpecies(Species species) {
+        super.setCommonSpecies(species);
+        if (!(species instanceof PalmSpecies)) {
+            LogManager.getLogger().warn("Common species " + species.getRegistryName() + " for nether fungus " + getRegistryName() + "is not of type "+ NetherFungusSpecies.class);
+        }
+    }
 
     @Override
     public Family setPreReloadDefaults() {
