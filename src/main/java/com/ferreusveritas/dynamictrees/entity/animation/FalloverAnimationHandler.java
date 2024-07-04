@@ -3,6 +3,7 @@ package com.ferreusveritas.dynamictrees.entity.animation;
 import com.ferreusveritas.dynamictrees.api.TreeHelper;
 import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
 import com.ferreusveritas.dynamictrees.client.SoundInstanceHandler;
+import com.ferreusveritas.dynamictrees.data.DTEntityTypeTags;
 import com.ferreusveritas.dynamictrees.entity.FallingTreeEntity;
 import com.ferreusveritas.dynamictrees.init.DTConfigs;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
@@ -142,7 +143,7 @@ public class FalloverAnimationHandler implements AnimationHandler {
         if (DTConfigs.ENABLE_FALLING_TREE_DAMAGE.get() && !level.isClientSide) {
             List<LivingEntity> elist = testEntityCollision(entity);
             for (LivingEntity living : elist) {
-                if (!getData(entity).entitiesHit.contains(living)) {
+                if (!getData(entity).entitiesHit.contains(living) && !living.getType().is(DTEntityTypeTags.FALLING_TREE_DAMAGE_IMMUNE)) {
                     getData(entity).entitiesHit.add(living);
                     float damage = entity.getDestroyData().woodVolume.getVolume() * Math.abs(fallSpeed) * 3f;
                     if (getData(entity).bounces == 0 && damage > 2) {
