@@ -90,7 +90,7 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
             this.primitiveFunc = primitiveFunc;
         }
         @Override public @NotNull String getSerializedName() {
-            return toString().toLowerCase();
+            return toString().toLowerCase(Locale.ENGLISH);
         }
 
         public Optional<Block> getPrimitive (MangroveFamily family){

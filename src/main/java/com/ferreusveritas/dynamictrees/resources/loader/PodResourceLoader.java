@@ -63,7 +63,7 @@ public final class PodResourceLoader extends JsonRegistryResourceLoader<Pod> {
 
     private void readBlockShapes(Pod pod, JsonObject json) {
         Direction.Plane.HORIZONTAL.stream().forEach(facing -> {
-            JsonElement shapeArrayElement = json.get(facing.getName().toLowerCase(Locale.ROOT));
+            JsonElement shapeArrayElement = json.get(facing.getName().toLowerCase(Locale.ENGLISH));
             if (!shapeArrayElement.isJsonArray()) {
                 return;
             }

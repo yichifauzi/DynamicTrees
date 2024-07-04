@@ -12,6 +12,8 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.Locale;
+
 /**
  * @author Harley O'Connor
  */
@@ -21,7 +23,7 @@ public final class VoxelShapeDeserialiser implements JsonDeserialiser<VoxelShape
     public Result<VoxelShape, JsonElement> deserialise(JsonElement input) {
         return JsonResult.forInput(input)
                 .mapIfType(String.class, name ->
-                        CommonVoxelShapes.SHAPES.getOrDefault(name.toLowerCase(), Shapes.block())
+                        CommonVoxelShapes.SHAPES.getOrDefault(name.toLowerCase(Locale.ENGLISH), Shapes.block())
                 ).elseMapIfType(AABB.class, Shapes::create)
                 .elseMapIfType(JsonArray.class, this::deserialiseArray)
                 .elseMapIfType(JsonObject.class, this::deserialiseObject)

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 public class JsonMath {
@@ -469,7 +470,7 @@ public class JsonMath {
         public final String name;
 
         MathFunction() {
-            this.name = toString().toLowerCase();
+            this.name = toString().toLowerCase(Locale.ENGLISH);
         }
 
         @Nullable

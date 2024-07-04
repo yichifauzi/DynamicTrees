@@ -42,7 +42,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
     };
 
     private static final Applier<DTBiomeHolderSet, String> TAG_APPLIER = (biomeList, tagRegex) -> {
-        tagRegex = tagRegex.toLowerCase();
+        tagRegex = tagRegex.toLowerCase(Locale.ENGLISH);
         final boolean notOperator = usingNotOperator(tagRegex);
         if (notOperator)
             tagRegex = tagRegex.substring(1);
@@ -65,7 +65,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
     };
 
     private static final VoidApplier<DTBiomeHolderSet, String> NAME_APPLIER = (biomeList, nameRegex) -> {
-        nameRegex = nameRegex.toLowerCase();
+        nameRegex = nameRegex.toLowerCase(Locale.ENGLISH);
         final boolean notOperator = usingNotOperator(nameRegex);
         if (notOperator)
             nameRegex = nameRegex.substring(1);
@@ -87,7 +87,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
         List<HolderSet<Biome>> orIncludes = new ArrayList<>();
         List<HolderSet<Biome>> orExcludes = new ArrayList<>();
         nameRegexes.forEach(nameRegex -> {
-            nameRegex = nameRegex.toLowerCase();
+            nameRegex = nameRegex.toLowerCase(Locale.ENGLISH);
             final boolean notOperator = usingNotOperator(nameRegex);
             if (notOperator)
                 nameRegex = nameRegex.substring(1);
@@ -111,7 +111,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
         List<HolderSet<Biome>> orIncludes = new ArrayList<>();
         List<HolderSet<Biome>> orExcludes = new ArrayList<>();
         nameRegexes.forEach(tagRegex -> {
-            tagRegex = tagRegex.toLowerCase();
+            tagRegex = tagRegex.toLowerCase(Locale.ENGLISH);
             final boolean notOperator = usingNotOperator(tagRegex);
             if (notOperator)
                 tagRegex = tagRegex.substring(1);
@@ -180,7 +180,7 @@ public final class BiomeListDeserialiser implements JsonDeserialiser<DTBiomeHold
         return JsonResult.forInput(input)
                 .mapIfType(String.class, biomeName -> {
                     DTBiomeHolderSet biomes = new DTBiomeHolderSet();
-                    biomes.getIncludeComponents().add(new DelayedHolderSet<>(() -> new NameRegexMatchHolderSet<>(DELAYED_BIOME_REGISTRY.get().asLookup(), biomeName.toLowerCase(Locale.ROOT))));
+                    biomes.getIncludeComponents().add(new DelayedHolderSet<>(() -> new NameRegexMatchHolderSet<>(DELAYED_BIOME_REGISTRY.get().asLookup(), biomeName.toLowerCase(Locale.ENGLISH))));
                     return biomes;
                 })
                 .elseMapIfType(JsonObject.class, selectorObject -> {

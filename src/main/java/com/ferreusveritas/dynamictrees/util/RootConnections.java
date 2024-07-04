@@ -4,6 +4,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.client.model.data.ModelProperty;
 
+import java.util.Locale;
+
 /**
  * Extension of regular {@link Connections} data, modified for surface roots. This is needed because roots only have
  * horizontal connections and a connection level.
@@ -82,7 +84,7 @@ public class RootConnections extends Connections {
 
         @Override
         public String getSerializedName() {
-            return toString().toLowerCase();
+            return toString().toLowerCase(Locale.ENGLISH);
         }
 
         public int getYOffset() {

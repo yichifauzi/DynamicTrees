@@ -9,6 +9,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
+
 import static com.ferreusveritas.dynamictrees.command.CommandConstants.RAW;
 
 /**
@@ -24,7 +26,7 @@ public final class RegistrySubCommand<V extends RegistryEntry<V>> extends SubCom
 
     @Override
     protected String getName() {
-        return this.registry.getName().toLowerCase();
+        return this.registry.getName().toLowerCase(Locale.ENGLISH);
     }
 
     @Override
