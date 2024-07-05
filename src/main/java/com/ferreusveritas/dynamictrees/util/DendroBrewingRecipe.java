@@ -2,6 +2,9 @@ package com.ferreusveritas.dynamictrees.util;
 
 import com.ferreusveritas.dynamictrees.item.DendroPotion;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraftforge.common.brewing.IBrewingRecipe;
 
 /**
@@ -23,37 +26,46 @@ public final class DendroBrewingRecipe implements IBrewingRecipe {
 
     @Override
     public boolean isInput(final ItemStack inputStack) {
-        // For transformation potion, only allow input if it doesn't already have a tree tag.
-        return DendroPotion.getPotionType(inputStack) == DendroPotion.getPotionType(this.input) && !inputStack.getOrCreateTag().contains(DendroPotion.TREE_TAG_KEY);
-    }
+	// Only allow Potion.AWKWARD or DendroPotion and for DendroPotion.TRANSFORM, only if it doesn't already have a tree tag.
+	if ((!inputStack.getOrCreateTag().contains(DendroPotion.TREE_TAG_KEY) && inputStack.getOrCreateTag().contains(DendroPotion.INDEX_TAG_KEY)) || inputStack.getItem() == Items.POTION) {
+		return true;
+	}
+		return false;
+	}
 
     @Override
     public boolean isIngredient(final ItemStack ingredientStack) {
-        return this.ingredient.getItem().equals(ingredientStack.getItem());
+	    return this.ingredient.getItem().equals(ingredientStack.getItem());
     }
 
     @Override
     public ItemStack getOutput(final ItemStack inputStack, final ItemStack ingredientStack) {
-        if (!inputStack.isEmpty() && !ingredientStack.isEmpty() && isIngredient(ingredientStack)) {
-            // For transformation potion, only brew if it doesn't already have a tree tag (must check here too, in case potion is left in after being brewed).
-            if (!inputStack.getOrCreateTag().contains(DendroPotion.TREE_TAG_KEY)) {
-                return this.output.copy();
-            }
-        }
-
-        return ItemStack.EMPTY;
+	    // We need to apply logic for the brewing or simply the ingredient defines the output and any input was allowed
+	    // A smarter way would be nice, but it works
+	    if (!inputStack.isEmpty() && !ingredientStack.isEmpty() && isIngredient(ingredientStack) && isInput(inputStack)) {
+		    if (ingredientStack.is(Items.CHARCOAL) & PotionUtils.getPotion(inputStack) == Potion.byName("awkward")) {
+			    return this.output.copy();
+		    }
+		    if (ingredientStack.is(Items.CHARCOAL) | inputStack.getItem() == Items.POTION) {
+			    return ItemStack.EMPTY;
+		    }
+		    if ((ingredientStack.is(Items.SLIME_BALL) || ingredientStack.is(Items.PUMPKIN_SEEDS) || ingredientStack.is(Items.GHAST_TEAR) || ingredientStack.is(Items.PRISMARINE_CRYSTALS)) & DendroPotion.getPotionType(inputStack) == DendroPotion.DendroPotionType.BIOCHAR) {
+			    return this.output.copy();
+		    }
+		    if ((ingredientStack.is(Items.SLIME_BALL) || ingredientStack.is(Items.PUMPKIN_SEEDS) || ingredientStack.is(Items.GHAST_TEAR) || ingredientStack.is(Items.PRISMARINE_CRYSTALS)) | DendroPotion.getPotionType(inputStack) != DendroPotion.DendroPotionType.TRANSFORM) {
+			    return ItemStack.EMPTY;
+		    }
+		    return this.output.copy();
+	    }
+	    return ItemStack.EMPTY;
     }
-
-    public ItemStack getInput() {
-        return input;
-    }
-
-    public ItemStack getIngredient() {
-        return ingredient;
-    }
-
-    public ItemStack getOutput() {
-        return output;
-    }
-
+	public ItemStack getInput() {
+		return input;
+	}
+	public ItemStack getIngredient() {
+		return ingredient;
+	}
+	public ItemStack getOutput() {
+		return output;
+	}
 }
