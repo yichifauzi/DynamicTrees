@@ -1,12 +1,16 @@
 package com.ferreusveritas.dynamictrees.compat.season;
 
+import com.ferreusveritas.dynamictrees.DynamicTrees;
+import com.ferreusveritas.dynamictrees.compat.CompatHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import sereneseasons.api.season.Season.SubSeason;
 import sereneseasons.api.season.SeasonHelper;
 import sereneseasons.config.SeasonsConfig;
+import sereneseasons.config.ServerConfig;
 import sereneseasons.season.SeasonHooks;
 
 public class SereneSeasonsSeasonProvider implements SeasonProvider {
@@ -34,4 +38,15 @@ public class SereneSeasonsSeasonProvider implements SeasonProvider {
         return false;
     }
 
+    public static void registerSereneSeasonsProvider (){
+        CompatHandler.registerSeasonManager(DynamicTrees.SERENE_SEASONS, () -> {
+            NormalSeasonManager seasonManager = new NormalSeasonManager(
+                    world -> ServerConfig.isDimensionWhitelisted(world.dimension()) ?
+                            new Tuple<>(new SereneSeasonsSeasonProvider(), new ActiveSeasonGrowthCalculator()) :
+                            new Tuple<>(new NullSeasonProvider(), new NullSeasonGrowthCalculator())
+            );
+            seasonManager.setTropicalPredicate((world, pos) -> sereneseasons.api.season.SeasonHelper.usesTropicalSeasons(world.getBiome(pos)));
+            return seasonManager;
+        });
+    }
 }

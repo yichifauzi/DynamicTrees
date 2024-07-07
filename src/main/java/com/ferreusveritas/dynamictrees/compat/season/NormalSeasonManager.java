@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 public class NormalSeasonManager implements SeasonManager {
 
-	public static final Supplier<NormalSeasonManager> NULL = NormalSeasonManager::new;
+	public static final Supplier<SeasonManager> NULL = NormalSeasonManager::new;
 
     private final Map<ResourceLocation, SeasonContext> seasonContextMap = new HashMap<>();
     private Function<Level, Tuple<SeasonProvider, SeasonGrowthCalculator>> seasonMapper = w -> new Tuple<>(new NullSeasonProvider(), new NullSeasonGrowthCalculator());
