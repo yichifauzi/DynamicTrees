@@ -26,7 +26,7 @@ public class SwampOakSpecies extends Species {
             switch (DTConfigs.SWAMP_OAKS_IN_WATER.get()) {
                 case SUNK: //generate 1 block down
                     if (context.radius() >= minRadiusForSunkGeneration) {
-                        context.rootPos().move(Direction.DOWN);
+                        context.rootPos().move(Direction.DOWN, countWaterBlocksBelow(context.level(), context.rootPos(), getAllowedWaterHeightForWorldgen()));
                         break;
                     } else {
                         return false;

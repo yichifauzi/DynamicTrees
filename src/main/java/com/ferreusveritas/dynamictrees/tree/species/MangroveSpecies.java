@@ -82,8 +82,8 @@ public class MangroveSpecies extends Species {
         BlockState dirtState = level.getBlockState(rootPos);
         Block dirt = dirtState.getBlock();
 
-        if (!SoilHelper.isSoilRegistered(dirt) && !(dirt instanceof RootyBlock) && !isWater(dirtState)) {
-            //soil is not valid so we place default roots
+        if ((!SoilHelper.isSoilRegistered(dirt) && !(dirt instanceof RootyBlock)) || isWater(dirtState)) {
+            //soil is not valid, or water so we place default roots
             level.setBlock(rootPos, getFamily().getDefaultSoil().getSoilState(dirtState, fertility, this.doesRequireTileEntity(level, rootPos)), 3);
 
             BlockEntity tileEntity = level.getBlockEntity(rootPos);
@@ -149,8 +149,9 @@ public class MangroveSpecies extends Species {
 
     @Override
     public boolean generate(GenerationContext context) {
-        context.rootPos().move(Direction.UP,
-                context.random().nextIntBetweenInclusive(minWorldGenHeightOffset, maxWorldGenHeightOffset));
+        int yOffset = context.random().nextIntBetweenInclusive(minWorldGenHeightOffset, maxWorldGenHeightOffset)
+                - countWaterBlocksBelow(context.level(), context.rootPos(), getAllowedWaterHeightForWorldgen());
+        context.rootPos().move(Direction.UP, yOffset);
 
             if (super.generate(context)
                     && !JoCodeRegistry.getCodes(this.getRegistryName(), true).isEmpty()) {

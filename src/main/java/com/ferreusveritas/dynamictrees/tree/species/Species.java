@@ -96,6 +96,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -1282,6 +1283,16 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         return isAcceptableSoil(soilBlockState);
     }
 
+    private int allowedWaterHeightForWorldgen = 1;
+
+    public void setAllowedWaterHeightForWorldgen(int allowedWaterHeightForWorldgen) {
+        this.allowedWaterHeightForWorldgen = allowedWaterHeightForWorldgen;
+    }
+
+    public int getAllowedWaterHeightForWorldgen() {
+        return allowedWaterHeightForWorldgen;
+    }
+
     /**
      * Version of soil acceptability tester that is only run for worldgen.  This allows for Swamp oaks and stuff.
      *
@@ -1295,9 +1306,11 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
 
         // If the block is water, check the block below it is valid soil (and not water).
         if (isAcceptableSoil && isWater(soilBlockState)) {
-            final BlockState downState = level.getBlockState(pos.below());
-            return !isWater(downState) && this.isAcceptableSoilForWorldgen(downState);
+            int maxH = getAllowedWaterHeightForWorldgen();
+            int waterBelow = countWaterBlocksBelow(level, pos, maxH+2);
+            return waterBelow <= maxH && isAcceptableSoilForWorldgen(level.getBlockState(pos.below(waterBelow)));
         }
+
 
         return isAcceptableSoil;
     }
@@ -1309,6 +1322,16 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
 
     protected boolean isWater(BlockState soilBlockState) {
         return SoilHelper.isSoilAcceptable(soilBlockState, SoilHelper.getSoilFlags(SoilHelper.WATER_LIKE));
+    }
+
+    protected int countWaterBlocksBelow (LevelAccessor level, BlockPos startPos, int maxCount){
+        int i=0;
+        for (; i<=maxCount; i++){
+            final BlockState downState = level.getBlockState(startPos.below(i));
+            if (!isWater(downState))
+                break;
+        }
+        return i;
     }
 
     private boolean plantableOnFluid = false;

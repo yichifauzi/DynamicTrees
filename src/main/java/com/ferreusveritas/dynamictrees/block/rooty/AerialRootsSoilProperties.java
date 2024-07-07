@@ -87,6 +87,15 @@ public class AerialRootsSoilProperties extends SoilProperties {
         return 0;
     }
 
+    @Override
+    public BlockState getSoilState(BlockState primitiveSoilState, int fertility, boolean requireTileEntity){
+        BlockState rootyState = super.getSoilState(primitiveSoilState, fertility, requireTileEntity);
+        if (rootyState.getBlock() instanceof RootRootyBlock){
+            return rootyState.setValue(RootRootyBlock.WATERLOGGED, primitiveSoilState.getFluidState().is(Fluids.WATER));
+        }
+        return rootyState;
+    }
+
     public static class RootRootyBlock extends RootyBlock implements SimpleWaterloggedBlock {
 
         protected static final IntegerProperty RADIUS = IntegerProperty.create("radius", 1, 8);

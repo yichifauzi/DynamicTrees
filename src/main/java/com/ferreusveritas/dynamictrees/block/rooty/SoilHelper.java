@@ -2,11 +2,13 @@ package com.ferreusveritas.dynamictrees.block.rooty;
 
 import com.ferreusveritas.dynamictrees.api.applier.PropertyApplierResult;
 import com.ferreusveritas.dynamictrees.api.applier.VoidApplier;
+import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -100,6 +102,10 @@ public class SoilHelper {
         Block soilBlock = soilState.getBlock();
         if (soilBlock instanceof RootyBlock) {
             soilBlock = ((RootyBlock) soilBlock).getPrimitiveSoilBlock();
+        }
+        //underwater foliage is taken as just water
+        if ((soilState.getFluidState().is(Fluids.WATER) && soilState.is(DTBlockTags.FOLIAGE))){
+            soilBlock = Blocks.WATER;
         }
         SoilProperties properties = dirtMap.getOrDefault(soilBlock, SoilProperties.NULL_SOIL_PROPERTIES);
         return (properties.getSoilFlags() & soilFlags) != 0 && properties.isValidState(soilState);
