@@ -1,29 +1,32 @@
 package com.ferreusveritas.dynamictrees.models.baked;
 
-import com.ferreusveritas.dynamictrees.client.ModelUtils;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
 import com.google.common.primitives.Ints;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+@OnlyIn(Dist.CLIENT)
 public class LargePalmLeavesBakedModel extends PalmLeavesBakedModel {
 
     public static List<LargePalmLeavesBakedModel> INSTANCES = new ArrayList<>();
 
-    public LargePalmLeavesBakedModel(ResourceLocation modelResLoc, ResourceLocation frondsResLoc){
-        super(modelResLoc, frondsResLoc);
+    public LargePalmLeavesBakedModel(ResourceLocation modelResLoc, ResourceLocation frondsResLoc, Function<Material, TextureAtlasSprite> spriteGetter){
+        super(frondsResLoc, spriteGetter);
         INSTANCES.add(this);
     }
 
-    public void setupModels (){
-        frondsTexture = ModelUtils.getTexture(frondsResLoc);
-
+    public void initModels(){
         for (CoordUtils.Surround surr : CoordUtils.Surround.values()) {
 
             SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(blockModel, ItemOverrides.EMPTY, false).particle(frondsTexture);

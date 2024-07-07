@@ -1,6 +1,8 @@
 package com.ferreusveritas.dynamictrees.models.baked;
 
 import com.ferreusveritas.dynamictrees.block.leaves.PalmLeavesProperties;
+import com.ferreusveritas.dynamictrees.client.ModelUtils;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -8,36 +10,44 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.RenderTypeGroup;
 import net.minecraftforge.client.model.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 
+@OnlyIn(Dist.CLIENT)
 public abstract class PalmLeavesBakedModel implements IDynamicBakedModel {
 
 
     protected RenderTypeGroup renderGroup = new RenderTypeGroup(RenderType.cutout(), RenderType.cutout());
     protected final BlockModel blockModel;
 
-    ResourceLocation frondsResLoc;
     TextureAtlasSprite frondsTexture;
 
     protected final BakedModel[] bakedFronds = new BakedModel[8]; // 8 = Number of surrounding blocks
 
-    public PalmLeavesBakedModel(ResourceLocation modelResLoc, ResourceLocation frondsResLoc){
+    public PalmLeavesBakedModel(ResourceLocation frondsResLoc, Function<Material, TextureAtlasSprite> spriteGetter){
         this.blockModel = new BlockModel(null, new ArrayList<>(), new HashMap<>(), false, BlockModel.GuiLight.FRONT, ItemTransforms.NO_TRANSFORMS, new ArrayList<>());
-        this.frondsResLoc = frondsResLoc;
+        frondsTexture = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, frondsResLoc));
+        initModels();
     }
 
     //This method defines the model and shapes of the fronds. Each implementation must define its own.
-    public abstract void setupModels ();
+    public abstract void initModels();
 
     @Nonnull
     @Override
@@ -86,6 +96,12 @@ public abstract class PalmLeavesBakedModel implements IDynamicBakedModel {
     @Override
     public ItemOverrides getOverrides() {
         return ItemOverrides.EMPTY;
+    }
+
+    @Override
+    public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
+    {
+        return ChunkRenderTypeSet.of(RenderType.cutoutMipped());
     }
 
     public static class BlockVertexData {

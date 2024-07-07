@@ -30,9 +30,9 @@ public class PalmLeavesModelGeometry implements IUnbakedGeometry<PalmLeavesModel
     @Override
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
         return switch (frondType) {
-            default -> new LargePalmLeavesBakedModel(modelLocation, frondsResLoc);
-            case 1 -> new MediumPalmLeavesBakedModel(modelLocation, frondsResLoc);
-            case 2 -> new SmallPalmLeavesBakedModel(modelLocation, frondsResLoc);
+            default -> new LargePalmLeavesBakedModel(modelLocation, frondsResLoc, spriteGetter);
+            case 1 -> new MediumPalmLeavesBakedModel(modelLocation, frondsResLoc, spriteGetter);
+            case 2 -> new SmallPalmLeavesBakedModel(modelLocation, frondsResLoc, spriteGetter);
         };
     }
 }

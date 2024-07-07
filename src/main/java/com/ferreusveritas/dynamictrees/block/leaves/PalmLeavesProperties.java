@@ -8,7 +8,6 @@ import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTLootTableProvider;
 import com.ferreusveritas.dynamictrees.data.provider.PalmLeavesLoaderBuilder;
-import com.ferreusveritas.dynamictrees.event.handler.BakedModelEventHandler;
 import com.ferreusveritas.dynamictrees.loot.DTLootParameterSets;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
@@ -83,7 +82,7 @@ public class PalmLeavesProperties extends LeavesProperties {
         textureConsumer.accept("core_bottom", coreLoc);
     }
 
-    ResourceLocation frondLoader = BakedModelEventHandler.LARGE_PALM_FRONDS;
+    ResourceLocation frondLoader = DynamicTrees.location("large_palm_fronds");
     public void setFrondLoader(ResourceLocation frondLoader) {
         this.frondLoader = frondLoader;
     }

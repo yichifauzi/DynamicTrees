@@ -3,9 +3,6 @@ package com.ferreusveritas.dynamictrees.event.handler;
 import com.ferreusveritas.dynamictrees.DynamicTrees;
 import com.ferreusveritas.dynamictrees.block.PottedSaplingBlock;
 import com.ferreusveritas.dynamictrees.models.baked.BakedModelBlockBonsaiPot;
-import com.ferreusveritas.dynamictrees.models.baked.LargePalmLeavesBakedModel;
-import com.ferreusveritas.dynamictrees.models.baked.MediumPalmLeavesBakedModel;
-import com.ferreusveritas.dynamictrees.models.baked.SmallPalmLeavesBakedModel;
 import com.ferreusveritas.dynamictrees.models.loader.*;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -21,13 +18,10 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = DynamicTrees.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class BakedModelEventHandler {
 
+    //These locs are accessed by the model data generators
     public static final ResourceLocation BRANCH = DynamicTrees.location("branch");
     public static final ResourceLocation SURFACE_ROOT = DynamicTrees.location("surface_root");
     public static final ResourceLocation ROOTS = DynamicTrees.location("roots");
-    public static final ResourceLocation THICK_BRANCH = DynamicTrees.location("thick_branch");
-    public static final ResourceLocation LARGE_PALM_FRONDS = DynamicTrees.location("large_palm_fronds");
-    public static final ResourceLocation MEDIUM_PALM_FRONDS = DynamicTrees.location("medium_palm_fronds");
-    public static final ResourceLocation SMALL_PALM_FRONDS = DynamicTrees.location("small_palm_fronds");
 
     @SubscribeEvent
     public static void onModelRegistryEvent(RegisterGeometryLoaders event) {
@@ -47,11 +41,4 @@ public final class BakedModelEventHandler {
         event.getModels().computeIfPresent(new ModelResourceLocation(PottedSaplingBlock.REG_NAME, ""), (k, val) -> new BakedModelBlockBonsaiPot(val));
     }
 
-    @SubscribeEvent
-    public static void onModelBake(ModelEvent.BakingCompleted event) {
-        // Setup fronds models
-        MediumPalmLeavesBakedModel.INSTANCES.forEach(MediumPalmLeavesBakedModel::setupModels);
-        LargePalmLeavesBakedModel.INSTANCES.forEach(LargePalmLeavesBakedModel::setupModels);
-        SmallPalmLeavesBakedModel.INSTANCES.forEach(SmallPalmLeavesBakedModel::setupModels);
-    }
 }
