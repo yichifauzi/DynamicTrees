@@ -2,6 +2,7 @@ package com.ferreusveritas.dynamictrees.systems.genfeature;
 
 import com.ferreusveritas.dynamictrees.api.TreeHelper;
 import com.ferreusveritas.dynamictrees.api.configuration.ConfigurationProperty;
+import com.ferreusveritas.dynamictrees.data.DTBiomeTags;
 import com.ferreusveritas.dynamictrees.systems.genfeature.context.PostGenerationContext;
 import com.ferreusveritas.dynamictrees.systems.genfeature.context.PostGrowContext;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
@@ -45,10 +46,10 @@ public class BeeNestGenFeature extends GenFeature {
     public static final ConfigurationProperty<Block> NEST_BLOCK = ConfigurationProperty.block("nest");
     public static final ConfigurationProperty<WorldGenChanceFunction> WORLD_GEN_CHANCE_FUNCTION = ConfigurationProperty.property("world_gen_chance", WorldGenChanceFunction.class);
 
-    private static final double MEADOWS_CHANCE = 1.0D;
-    private static final double PLAINS_CHANCE = 0.05D;
-    private static final double FLOWER_FOREST_CHANCE = 0.02D;
-    private static final double FOREST_CHANCE = 0.0002D;
+    private static final double GUARANTEED_CHANCE = 1.0D;
+    private static final double COMMON_CHANCE = 0.05D;
+    private static final double UNCOMMON_CHANCE = 0.02D;
+    private static final double RARE_CHANCE = 0.0002D;
     private static final double GROW_CHANCE = 0.001D;
 
     public BeeNestGenFeature(ResourceLocation registryName) {
@@ -76,16 +77,16 @@ public class BeeNestGenFeature extends GenFeature {
         }).with(WORLD_GEN_CHANCE_FUNCTION, (world, pos) -> {
             // Default biome check chance function. Uses vanilla chances
             Holder<Biome> biomeHolder = world.getUncachedNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
-            if (biomeHolder.is(Biomes.MEADOW))
-                return MEADOWS_CHANCE;
+            if (biomeHolder.is(DTBiomeTags.IS_BEE_NEST_GUARANTEED))
+                return GUARANTEED_CHANCE;
 
-            if (biomeHolder.is(Tags.Biomes.IS_PLAINS))
-                return PLAINS_CHANCE;
+            if (biomeHolder.is(DTBiomeTags.IS_BEE_NEST_COMMON))
+                return COMMON_CHANCE;
 
-            if (biomeHolder.is(Biomes.FLOWER_FOREST))
-                return FLOWER_FOREST_CHANCE;
+            if (biomeHolder.is(DTBiomeTags.IS_BEE_NEST_UNCOMMON))
+                return UNCOMMON_CHANCE;
 
-            return biomeHolder.is(BiomeTags.IS_FOREST) ? FOREST_CHANCE : 0;
+            return biomeHolder.is(DTBiomeTags.IS_BEE_NEST_RARE) ? RARE_CHANCE : 0;
         }).with(MAX_COUNT, 1);
     }
 

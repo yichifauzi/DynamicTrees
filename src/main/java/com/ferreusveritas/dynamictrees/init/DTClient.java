@@ -135,8 +135,6 @@ public class DTClient {
         ForgeRegistries.BLOCKS.getValues().stream().filter(block -> block instanceof DynamicSaplingBlock || block instanceof RootyBlock || block instanceof FruitBlock || block instanceof PodBlock)
                 .forEach(block -> ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutoutMipped()));
 
-//		ForgeRegistries.BLOCKS.getValues().stream().filter(block -> block instanceof ThickBranchBlock)
-//				.forEach(block -> RenderTypeLookup.setRenderLayer(block , ThickRingTextureManager.BRANCH_SOLID));
     }
 
     private static void registerColorHandlers() {

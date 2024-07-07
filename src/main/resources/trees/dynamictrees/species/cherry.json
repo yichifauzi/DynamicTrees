@@ -15,5 +15,6 @@
     "perfect_biomes": { "types": [ "cherry_grove", "overworld" ] },
     "primitive_sapling": "cherry_sapling",
     "features" : [
+        "bee_nest"
     ]
 }
