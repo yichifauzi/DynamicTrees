@@ -89,7 +89,8 @@ public final class SpeciesResourceLoader extends JsonRegistryResourceLoader<Spec
         this.gatherDataAppliers
                 .register("sapling_shape", VoxelShape.class, Species::setSaplingShape)
                 .registerMapApplier("model_overrides", ResourceLocation.class, Species::setModelOverrides)
-                .registerMapApplier("texture_overrides", ResourceLocation.class, Species::setTextureOverrides);
+                .registerMapApplier("texture_overrides", ResourceLocation.class, Species::setTextureOverrides)
+                .registerMapApplier("lang_overrides", String.class, Species::setLangOverrides);
 
         this.reloadAppliers
                 .register("tapering", Float.class, Species::setTapering)

@@ -4,6 +4,7 @@ import com.ferreusveritas.dynamictrees.DynamicTrees;
 import com.ferreusveritas.dynamictrees.api.TreeHelper;
 import com.ferreusveritas.dynamictrees.api.data.BranchItemModelGenerator;
 import com.ferreusveritas.dynamictrees.api.data.BranchStateGenerator;
+import com.ferreusveritas.dynamictrees.api.data.FamilyLangGenerator;
 import com.ferreusveritas.dynamictrees.api.data.Generator;
 import com.ferreusveritas.dynamictrees.api.data.StrippedBranchStateGenerator;
 import com.ferreusveritas.dynamictrees.api.data.SurfaceRootStateGenerator;
@@ -23,6 +24,7 @@ import com.ferreusveritas.dynamictrees.data.DTItemTags;
 import com.ferreusveritas.dynamictrees.data.provider.BranchLoaderBuilder;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTItemModelProvider;
+import com.ferreusveritas.dynamictrees.data.provider.DTLangProvider;
 import com.ferreusveritas.dynamictrees.entity.FallingTreeEntity;
 import com.ferreusveritas.dynamictrees.entity.animation.AnimationHandler;
 import com.ferreusveritas.dynamictrees.init.DTConfigs;
@@ -177,7 +179,7 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     private final List<BranchBlock> validBranches = new LinkedList<>();
 
     /**
-     * The maximum radius of a {@link BranchBlock} belonging to this family. {@link Species#maxBranchRadius} will be
+     * The maximum radius of a {@link BranchBlock} belonging to this family. {@link Species#getMaxBranchRadius()} will be
      * clamped to this value.
      */
     private int maxBranchRadius = BranchBlock.MAX_RADIUS;
@@ -884,9 +886,13 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     protected final MutableLazyValue<Generator<DTItemModelProvider, Family>> branchItemModelGenerator =
             MutableLazyValue.supplied(BranchItemModelGenerator::new);
 
+    protected final MutableLazyValue<Generator<DTLangProvider, Family>> familyLangGenerator =
+            MutableLazyValue.supplied(FamilyLangGenerator::new);
+
     //Texture overrides
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
+    protected HashMap<String, String> langOverrides = new HashMap<>();
     public static final String BRANCH = "branch";
     public static final String BRANCH_TOP = "branch_top";
     public static final String STRIPPED_BRANCH = "stripped_branch";
@@ -906,6 +912,12 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     }
     public Optional<ResourceLocation> getModelPath(String key) {
         return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
+    }
+    public void setLangOverrides(Map<String, String> langOverrides) {
+        this.langOverrides.putAll(langOverrides);
+    }
+    public Optional<String> getLangOverride(String key) {
+        return Optional.ofNullable(langOverrides.getOrDefault(key, null));
     }
 
     public void addBranchTextures(BiConsumer<String, ResourceLocation> textureConsumer, ResourceLocation primitiveLogLocation, Block sourceBlock) {
@@ -943,7 +955,11 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
         this.branchItemModelGenerator.get().generate(provider, this);
     }
 
-    //////////////////////////////
+    @Override
+    public void generateLangData(DTLangProvider provider) {
+        this.familyLangGenerator.get().generate(provider, this);
+    }
+//////////////////////////////
     // JAVA OBJECT STUFF
     //////////////////////////////
 

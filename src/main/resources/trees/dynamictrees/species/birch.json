@@ -24,5 +24,8 @@
         },
         "rot_soil",
         "bee_nest"
-    ]
+    ],
+    "lang_overrides": {
+        "seed": "Birch Catkin"
+    }
 }

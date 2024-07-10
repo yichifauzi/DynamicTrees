@@ -2,6 +2,7 @@ package com.ferreusveritas.dynamictrees.block.leaves;
 
 import com.ferreusveritas.dynamictrees.api.cell.CellKit;
 import com.ferreusveritas.dynamictrees.api.data.Generator;
+import com.ferreusveritas.dynamictrees.api.data.LeavesPropertiesLangGenerator;
 import com.ferreusveritas.dynamictrees.api.data.LeavesStateGenerator;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryEntry;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
@@ -11,6 +12,7 @@ import com.ferreusveritas.dynamictrees.cell.CellKits;
 import com.ferreusveritas.dynamictrees.client.BlockColorMultipliers;
 import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
+import com.ferreusveritas.dynamictrees.data.provider.DTLangProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTLootTableProvider;
 import com.ferreusveritas.dynamictrees.init.DTTrees;
 import com.ferreusveritas.dynamictrees.loot.DTLootContextParams;
@@ -307,6 +309,7 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
 
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
+    protected HashMap<String, String> langOverrides = new HashMap<>();
     public static final String LEAVES = "leaves";
 
     public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
@@ -315,11 +318,17 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
         this.modelOverrides.putAll(modelOverrides);
     }
+    public void setLangOverrides(Map<String, String> modelOverrides) {
+        this.langOverrides.putAll(modelOverrides);
+    }
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }
     public Optional<ResourceLocation> getModelPath(String key) {
         return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
+    }
+    public Optional<String> getLangOverride(String key) {
+        return Optional.ofNullable(langOverrides.getOrDefault(key, null));
     }
 
     ///////////////////////////////////////////
@@ -593,6 +602,8 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
 
     protected final MutableLazyValue<Generator<DTBlockStateProvider, LeavesProperties>> stateGenerator =
             MutableLazyValue.supplied(LeavesStateGenerator::new);
+    protected final MutableLazyValue<Generator<DTLangProvider, LeavesProperties>> langGenerator =
+            MutableLazyValue.supplied(LeavesPropertiesLangGenerator::new);
 
     @Override
     public void generateStateData(DTBlockStateProvider provider) {
@@ -600,7 +611,11 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
         this.stateGenerator.get().generate(provider, this);
     }
 
-    ///////////////////////////////////////////
+    @Override
+    public void generateLangData(DTLangProvider provider) {
+        this.langGenerator.get().generate(provider, this);
+    }
+///////////////////////////////////////////
     // LEAVES COLORS
     ///////////////////////////////////////////
 

@@ -29,5 +29,8 @@
                 "blocks_per_pod": 8
             }
         }
-    ]
+    ],
+    "lang_overrides": {
+        "seed": "Cocoa Pod"
+    }
 }

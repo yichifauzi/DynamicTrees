@@ -28,5 +28,8 @@
                 "fruit": "apple"
             }
         }
-    ]
+    ],
+    "lang_overrides": {
+        "seed": "Apple Pip"
+    }
 }

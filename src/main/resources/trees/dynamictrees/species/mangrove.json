@@ -32,5 +32,8 @@
       }
     },
     "bee_nest"
-  ]
+  ],
+  "lang_overrides": {
+    "seed": "Mangrove Propagule"
+  }
 }
