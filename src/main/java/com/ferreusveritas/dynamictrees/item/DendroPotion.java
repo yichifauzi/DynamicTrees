@@ -4,6 +4,7 @@ import com.ferreusveritas.dynamictrees.api.TreeRegistry;
 import com.ferreusveritas.dynamictrees.api.substance.Emptiable;
 import com.ferreusveritas.dynamictrees.api.substance.SubstanceEffect;
 import com.ferreusveritas.dynamictrees.api.substance.SubstanceEffectProvider;
+import com.ferreusveritas.dynamictrees.init.DTConfigs;
 import com.ferreusveritas.dynamictrees.init.DTRegistries;
 import com.ferreusveritas.dynamictrees.systems.substance.DenudeSubstance;
 import com.ferreusveritas.dynamictrees.systems.substance.DepleteSubstance;
@@ -119,27 +120,17 @@ public class DendroPotion extends Item implements SubstanceEffectProvider, Empti
     @Nullable
     @Override
     public SubstanceEffect getSubstanceEffect(ItemStack itemStack) {
-        switch (getPotionType(itemStack)) {
-            default:
-            case BIOCHAR:
-                return null;
-            case BURGEONING:
-                return new GrowthSubstance();
-            case GIGAS:
-                return new MegaSubstance();
-            case DEPLETION:
-                return new DepleteSubstance().setAmount(15);
-            case FERTILITY:
-                return new FertilizeSubstance().setAmount(15);
-            case PERSISTENCE:
-                return new FreezeSubstance();
-            case TRANSFORM:
-                return new TransformSubstance(this.getTargetSpecies(itemStack));
-            case HARVEST:
-                return new HarvestSubstance();
-            case DENUDING:
-                return new DenudeSubstance();
-        }
+        return switch (getPotionType(itemStack)) {
+            default -> null;
+            case BURGEONING -> new GrowthSubstance();
+            case GIGAS -> new MegaSubstance();
+            case DEPLETION -> new DepleteSubstance().setAmount(15);
+            case FERTILITY -> new FertilizeSubstance().setAmount(15);
+            case PERSISTENCE -> new FreezeSubstance();
+            case TRANSFORM -> new TransformSubstance(this.getTargetSpecies(itemStack));
+            case HARVEST -> new HarvestSubstance();
+            case DENUDING -> new DenudeSubstance();
+        };
     }
 
     public Species getTargetSpecies(ItemStack itemStack) {
@@ -156,20 +147,21 @@ public class DendroPotion extends Item implements SubstanceEffectProvider, Empti
     }
 
     public void registerRecipes() {
-        final ItemStack awkwardStack = PotionUtils.setPotion(new ItemStack(Items.POTION), Potion.byName("awkward"));
+        final ItemStack baseStack = PotionUtils.setPotion(new ItemStack(Items.POTION), Potion.byName(DTConfigs.BIOCHAR_BASE_BREWING_BASE.get()));
 
-        brewingRecipes.add(this.getRecipe(awkwardStack, new ItemStack(Items.CHARCOAL), this.getPotionStack(DendroPotionType.BIOCHAR)));
+        //Biochar potion
+        brewingRecipes.add(this.getRecipe(baseStack, new ItemStack(Items.CHARCOAL), this.getPotionStack(DendroPotionType.BIOCHAR)));
 
+        //Regular potions
         for (int i = 1; i < DendroPotionType.values().length; i++) {
             final DendroPotionType type = DendroPotionType.values()[i];
 
-            if (!type.isActive()) {
-                continue;
-            }
+            if (!type.isActive()) continue;
 
             brewingRecipes.add(this.getRecipe(type.getIngredient(), type));
         }
 
+        //Transformation potions
         for (Species species : TreeRegistry.getPotionTransformableSpecies()) {
             brewingRecipes.add(new DendroBrewingRecipe(this.getPotionStack(DendroPotionType.TRANSFORM), species.getSeedStack(1),
                     this.setTargetSpecies(this.getPotionStack(DendroPotionType.TRANSFORM), species)));
@@ -178,20 +170,8 @@ public class DendroPotion extends Item implements SubstanceEffectProvider, Empti
         brewingRecipes.forEach(BrewingRecipeRegistry::addRecipe);
     }
 
-    private DendroBrewingRecipe getRecipe(Item ingredient, DendroPotionType typeOut) {
-        return this.getRecipe(new ItemStack(ingredient), typeOut);
-    }
-
-    private DendroBrewingRecipe getRecipe(Block ingredient, DendroPotionType typeOut) {
-        return this.getRecipe(new ItemStack(ingredient), typeOut);
-    }
-
     private DendroBrewingRecipe getRecipe(ItemStack ingredient, DendroPotionType typeOut) {
         return this.getRecipe(this.getPotionStack(typeOut.getBasePotionType()), ingredient, this.getPotionStack(typeOut));
-    }
-
-    private DendroBrewingRecipe getRecipe(ItemStack ingredientStack, ItemStack stackOut) {
-        return this.getRecipe(this.getPotionStack(DendroPotionType.BIOCHAR), ingredientStack, stackOut);
     }
 
     private DendroBrewingRecipe getRecipe(ItemStack stackIn, ItemStack ingredientStack, ItemStack stackOut) {
