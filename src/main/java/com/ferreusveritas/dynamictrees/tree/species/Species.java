@@ -2295,7 +2295,7 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         return Collections.singletonList(DTItemTags.SEEDS);
     }
 
-    protected String onlyIfLoaded = "";
+    protected List<String> onlyIfLoaded = new ArrayList<>();
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, String> langOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
@@ -2304,10 +2304,10 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     public static final String SEED = "seed";
 
     public void setOnlyIfLoaded(String onlyIfLoaded) {
-        this.onlyIfLoaded = onlyIfLoaded;
+        this.onlyIfLoaded.add(onlyIfLoaded);
     }
     public boolean isOnlyIfLoaded() {
-        return !onlyIfLoaded.isEmpty() || !onlyIfLoaded.isBlank();
+        return !onlyIfLoaded.isEmpty();
     }
 
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {

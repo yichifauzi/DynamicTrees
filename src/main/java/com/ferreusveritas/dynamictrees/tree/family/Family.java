@@ -68,6 +68,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -900,7 +901,7 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     protected final MutableLazyValue<Generator<DTLangProvider, Family>> familyLangGenerator =
             MutableLazyValue.supplied(FamilyLangGenerator::new);
 
-    protected String onlyIfLoaded = "";
+    protected List<String> onlyIfLoaded = new ArrayList<>();
     //Texture overrides
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
@@ -914,11 +915,11 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
 
 
     public void setOnlyIfLoaded(String onlyIfLoaded) {
-        this.onlyIfLoaded = onlyIfLoaded;
+        this.onlyIfLoaded.add(onlyIfLoaded);
     }
 
     public boolean isOnlyIfLoaded() {
-        return !onlyIfLoaded.isBlank() || !onlyIfLoaded.isEmpty();
+        return !onlyIfLoaded.isEmpty();
     }
 
     public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
