@@ -66,6 +66,7 @@ public class DTConfigs {
     public static final ForgeConfigSpec.BooleanValue PODZOL_GEN;
 
     public static final ForgeConfigSpec.BooleanValue GENERATE_DIRT_BUCKET_RECIPES;
+    public static final ForgeConfigSpec.ConfigValue<String> BIOCHAR_BASE_BREWING_BASE;
 
     public static final ForgeConfigSpec.BooleanValue WORLD_GEN;
     public static final ForgeConfigSpec.ConfigValue<List<String>> DIMENSION_BLACKLIST;
@@ -180,6 +181,8 @@ public class DTConfigs {
         COMMON_BUILDER.comment("Miscellaneous Settings").push("misc");
         GENERATE_DIRT_BUCKET_RECIPES = COMMON_BUILDER.comment("If enabled, dirt bucket recipes will be automatically generated.")
                 .define("generateDirtBucketRecipes", true);
+        BIOCHAR_BASE_BREWING_BASE = COMMON_BUILDER.comment("The base potion the Biochar Base is brewed from. Minecraft potions use 'awkward'. If you change this, don't forget to update the patchouli manual page too.")
+                .define("biocharBrewingBase", "awkward");
         COMMON_BUILDER.pop();
 
         COMMON_BUILDER.comment("Mod Integration Settings").push("integration");
