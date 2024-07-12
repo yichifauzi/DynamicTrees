@@ -39,6 +39,7 @@ public final class LeavesPropertiesResourceLoader extends JsonRegistryResourceLo
         // Primitive leaves are needed before gathering data.
         this.gatherDataAppliers
                 .register("primitive_leaves", Block.class, LeavesProperties::setPrimitiveLeaves)
+                .register("only_if_loaded",String.class,LeavesProperties::setOnlyIfLoaded)
                 .registerListApplier("seed_drop_chances", Float.class, LeavesProperties::setSeedDropChances)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, LeavesProperties::setTextureOverrides)
                 .registerMapApplier("model_overrides", ResourceLocation.class, LeavesProperties::setModelOverrides)

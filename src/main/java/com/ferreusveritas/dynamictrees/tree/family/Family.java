@@ -68,7 +68,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -439,9 +447,10 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     /**
      * This is used for trees with root systems, i.e. mangrove trees.
      * By default, most trees do not have one, so we just return the normal branch.
-     * @param level the world
+     *
+     * @param level   the world
      * @param species the species
-     * @param pos the position the branch will be placed on
+     * @param pos     the position the branch will be placed on
      * @return the branch block selected
      */
     public Optional<BranchBlock> getBranchForRootsPlacement(LevelAccessor level, Species species, BlockPos pos) {
@@ -691,11 +700,12 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
         this.hasStrippedBranch = hasStrippedBranch;
     }
 
-    public int getMinRadiusForStripping(){
+    public int getMinRadiusForStripping() {
         if (minRadiusForStripping == null) return DTConfigs.MIN_RADIUS_FOR_STRIP.get();
         return minRadiusForStripping;
     }
-    public void setMinRadiusForStripping(int radius){
+
+    public void setMinRadiusForStripping(int radius) {
         this.minRadiusForStripping = radius;
     }
 
@@ -879,6 +889,7 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     public ResourceLocation getBranchItemParentLocation() {
         return DynamicTrees.location("item/branch");
     }
+
     public ResourceLocation getRootItemParentLocation() {
         return DynamicTrees.location("item/root_branch");
     }
@@ -889,6 +900,7 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     protected final MutableLazyValue<Generator<DTLangProvider, Family>> familyLangGenerator =
             MutableLazyValue.supplied(FamilyLangGenerator::new);
 
+    protected String onlyIfLoaded = "";
     //Texture overrides
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
@@ -900,22 +912,36 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     public static final String ROOTS_SIDE = "roots_side";
     public static final String ROOTS_TOP = "roots_top";
 
+
+    public void setOnlyIfLoaded(String onlyIfLoaded) {
+        this.onlyIfLoaded = onlyIfLoaded;
+    }
+
+    public boolean isOnlyIfLoaded() {
+        return !onlyIfLoaded.isBlank() || !onlyIfLoaded.isEmpty();
+    }
+
     public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
         this.textureOverrides.putAll(textureOverrides);
     }
+
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }
+
     //There are no models to override but this is here for future-proofing.
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
         this.modelOverrides.putAll(textureOverrides);
     }
+
     public Optional<ResourceLocation> getModelPath(String key) {
         return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
     }
+
     public void setLangOverrides(Map<String, String> langOverrides) {
         this.langOverrides.putAll(langOverrides);
     }
+
     public Optional<String> getLangOverride(String key) {
         return Optional.ofNullable(langOverrides.getOrDefault(key, null));
     }
@@ -925,8 +951,8 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
         ResourceLocation rings = suffix(primitiveLogLocation, "_top");
 
         AtomicBoolean isStripped = new AtomicBoolean(false);
-        getPrimitiveStrippedLog().ifPresent(l-> isStripped.set(l.equals(sourceBlock)));
-        if (isStripped.get()){
+        getPrimitiveStrippedLog().ifPresent(l -> isStripped.set(l.equals(sourceBlock)));
+        if (isStripped.get()) {
             if (textureOverrides.containsKey(STRIPPED_BRANCH)) bark = textureOverrides.get(STRIPPED_BRANCH);
             if (textureOverrides.containsKey(STRIPPED_BRANCH_TOP)) rings = textureOverrides.get(STRIPPED_BRANCH_TOP);
         } else {

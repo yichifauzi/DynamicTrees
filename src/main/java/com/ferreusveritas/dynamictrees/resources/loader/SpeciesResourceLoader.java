@@ -88,6 +88,7 @@ public final class SpeciesResourceLoader extends JsonRegistryResourceLoader<Spec
         // We need the sapling shape to know which parent smartmodel the sapling model should use.
         this.gatherDataAppliers
                 .register("sapling_shape", VoxelShape.class, Species::setSaplingShape)
+                .register("only_if_loaded", String.class, Species::setOnlyIfLoaded)
                 .registerMapApplier("model_overrides", ResourceLocation.class, Species::setModelOverrides)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, Species::setTextureOverrides)
                 .registerMapApplier("lang_overrides", String.class, Species::setLangOverrides);

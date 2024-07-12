@@ -35,7 +35,6 @@ public final class GatherDataHelper {
         gatherBlockStateAndModelData(modId, event, registries);
         gatherItemModelData(modId, event, registries);
         gatherLootData(modId, event);
-        gatherDatapackData(modId, event);
         gatherLangData(modId, event, registries);
     }
 
@@ -72,10 +71,7 @@ public final class GatherDataHelper {
         );
     }
 
-    public static void gatherDatapackData(final String modId, final GatherDataEvent event) {
-        event.getGenerator().addProvider(event.includeServer(), new DTDatapackBuiltinEntriesProvider(
-                event.getGenerator().getPackOutput(), event.getLookupProvider(), Set.of(modId, DynamicTrees.MINECRAFT)));
-    }
+
     public static void addLangGenerator(String modId,Generator<DTLangProvider, String> generator) {
         GatherDataHelper.extraLangGenerators.put(modId,generator);
     }

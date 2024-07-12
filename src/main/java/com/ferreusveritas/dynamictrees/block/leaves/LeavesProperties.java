@@ -157,7 +157,7 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
      * behavior.
      */
     protected BlockState primitiveLeaves;
-
+    protected String onlyIfLoaded = "";
     /**
      * The {@link CellKit}, which is for leaves automata.
      */
@@ -298,6 +298,12 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
         }
     }
 
+    public boolean isOnlyIfLoaded() {
+        return !onlyIfLoaded.isBlank() || !onlyIfLoaded.isEmpty();
+    }
+    public void setOnlyIfLoaded(String onlyIfLoaded) {
+        this.onlyIfLoaded = onlyIfLoaded;
+    }
     /**
      * Gets {@link ItemStack} of the primitive (vanilla) leaves (for things like when it's sheared).
      *
