@@ -1,18 +1,13 @@
 package com.ferreusveritas.dynamictrees.api.data;
 
-import com.ferreusveritas.dynamictrees.api.registry.RegistryEntry;
 import com.ferreusveritas.dynamictrees.data.provider.DTLangProvider;
-import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -29,7 +24,7 @@ public class SpeciesLangGenerator implements Generator<DTLangProvider, Species>{
         if(input.hasSeed()) {
             itemLang(input.getSeed().get(), input.getLangOverride("seed"));
         }
-        input.getSapling().ifPresent(sapling -> blockLang(sapling, input.getLangOverride("sapling")));
+        //input.getSapling().ifPresent(sapling -> blockLang(sapling, input.getLangOverride("sapling")));
 
     }
 

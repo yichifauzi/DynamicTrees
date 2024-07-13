@@ -21,12 +21,7 @@ import com.ferreusveritas.dynamictrees.resources.Resources;
 import com.ferreusveritas.dynamictrees.tree.Resettable;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
-import com.ferreusveritas.dynamictrees.util.BlockStates;
-import com.ferreusveritas.dynamictrees.util.LevelContext;
-import com.ferreusveritas.dynamictrees.util.LootTableSupplier;
-import com.ferreusveritas.dynamictrees.util.MutableLazyValue;
-import com.ferreusveritas.dynamictrees.util.Optionals;
-import com.ferreusveritas.dynamictrees.util.ResourceLocationUtils;
+import com.ferreusveritas.dynamictrees.util.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
@@ -63,8 +58,8 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * This class provides a means of holding individual properties for leaves.  This is necessary since leaves can contain
@@ -619,9 +614,10 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
 
     @Override
     public void generateLangData(DTLangProvider provider) {
-        this.langGenerator.get().generate(provider, this);
+        //this.langGenerator.get().generate(provider, this);
     }
-///////////////////////////////////////////
+
+    ///////////////////////////////////////////
     // LEAVES COLORS
     ///////////////////////////////////////////
 
