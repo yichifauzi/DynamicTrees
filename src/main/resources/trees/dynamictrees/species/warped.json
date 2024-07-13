@@ -31,5 +31,8 @@
                 "min_radius": 7
             }
         }
-    ]
+    ],
+    "lang_overrides": {
+        "seed": "Warped Cap"
+    }
 }

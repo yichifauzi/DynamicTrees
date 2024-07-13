@@ -5,11 +5,11 @@ import com.ferreusveritas.dynamictrees.data.DTItemTags;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class DTItemTagsProvider extends ItemTagsProvider {
     public DTItemTagsProvider(PackOutput output, String modId, CompletableFuture<HolderLookup.Provider> lookupProvider,
-            CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, @Nullable ExistingFileHelper existingFileHelper) {
+                              CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, blockTags, modId, existingFileHelper);
     }
 
@@ -47,8 +47,13 @@ public class DTItemTagsProvider extends ItemTagsProvider {
 
     protected void addDTTags() {
         Family.REGISTRY.dataGenerationStream(this.modId).forEach(family -> {
-            family.getBranchItem().ifPresent(item ->
-                    family.defaultBranchItemTags().forEach(tag -> this.tag(tag).add(item))
+            family.getBranchItem().ifPresent(item -> {
+                        if (!family.isOnlyIfLoaded()) {
+                            family.defaultBranchItemTags().forEach(tag -> this.tag(tag).add(item));
+                        } else {
+                            family.defaultBranchItemTags().forEach(tag -> this.tag(tag).addOptional(BuiltInRegistries.ITEM.getKey(item)));
+                        }
+                    }
             );
         });
 
@@ -59,8 +64,14 @@ public class DTItemTagsProvider extends ItemTagsProvider {
             }
             // Create seed item tag.
             species.getSeed().ifPresent(seed ->
-                    species.defaultSeedTags().forEach(tag ->
-                            this.tag(tag).add(seed)));
+                    species.defaultSeedTags().forEach(tag ->{
+                                if (!species.isOnlyIfLoaded()) {
+                                    this.tag(tag).add(seed);
+                                } else {
+                                    this.tag(tag).addOptional(BuiltInRegistries.ITEM.getKey(seed));
+                                }
+                    })
+            );
         });
     }
 

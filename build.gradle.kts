@@ -86,7 +86,7 @@ sourceSets.main.get().resources {
 dependencies {
     minecraft("net.minecraftforge:forge:$mcVersion-${property("forgeVersion")}")
 
-    compileOnly(fg.deobf("curse.maven:jade-324717:${property("jadeVersion")}"))
+    implementation(fg.deobf("curse.maven:jade-324717:${property("jadeVersion")}"))
 
     compileOnly(fg.deobf("mezz.jei:jei-$mcVersion-forge-api:${property("jeiVersion")}"))
     compileOnly(fg.deobf("mezz.jei:jei-$mcVersion-common-api:${property("jeiVersion")}"))

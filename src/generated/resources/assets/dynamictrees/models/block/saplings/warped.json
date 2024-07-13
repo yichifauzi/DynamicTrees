@@ -1,5 +1,5 @@
 {
-  "parent": "dynamictrees:block/smartmodel/mushroom_flat",
+  "parent": "dynamictrees:block/smartmodel/mushroom_round",
   "render_type": "minecraft:cutout_mipped",
   "textures": {
     "cap": "dynamictrees:block/warped_cap",

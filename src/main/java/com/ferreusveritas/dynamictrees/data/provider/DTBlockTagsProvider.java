@@ -11,6 +11,7 @@ import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.family.MangroveFamily;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
@@ -20,7 +21,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -97,8 +97,13 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
         LeavesProperties.REGISTRY.dataGenerationStream(this.modId).forEach(leavesProperties -> {
             // Create dynamic leaves block tag.
             leavesProperties.getDynamicLeavesBlock().ifPresent(leaves ->
-                    leavesProperties.defaultLeavesTags().forEach(tag ->
-                            this.tag(tag).add(leaves))
+                    leavesProperties.defaultLeavesTags().forEach(tag -> {
+                        if (leavesProperties.isOnlyIfLoaded()) {
+                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(leaves));
+                        } else {
+                            this.tag(tag).add(leaves);
+                        }
+                    })
             );
         });
 
@@ -106,23 +111,39 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
             // Create branch tag and harvest tag if a branch exists.
             family.getBranch().ifPresent(branch -> {
                 this.tierTag(family.getDefaultBranchHarvestTier()).ifPresent(tagBuilder -> tagBuilder.add(branch));
-                family.defaultBranchTags().forEach(tag ->
-                        this.tag(tag).add(branch));
+                family.defaultBranchTags().forEach(tag -> {
+                    if (!family.isOnlyIfLoaded()) {
+                        this.tag(tag).add(branch);
+                    } else {
+                        this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(branch));
+                    }
+                });
             });
 
             // Create stripped branch tag and harvest tag if the family has a stripped branch.
             family.getStrippedBranch().ifPresent(strippedBranch -> {
                 this.tierTag(family.getDefaultStrippedBranchHarvestTier()).ifPresent(tagBuilder -> tagBuilder.add(strippedBranch));
                 family.defaultStrippedBranchTags().forEach(tag ->
-                        this.tag(tag).add(strippedBranch));
+                {
+                    if (!family.isOnlyIfLoaded()) {
+                        this.tag(tag).add(strippedBranch);
+                    } else {
+                        this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(strippedBranch));
+                    }
+                });
             });
 
             //Create roots tag and root harvest tag if the family is mangrove-like.
-            if (family instanceof MangroveFamily mangroveFamily){
+            if (family instanceof MangroveFamily mangroveFamily) {
                 mangroveFamily.getRoots().ifPresent(roots -> {
                     this.tierTag(mangroveFamily.getDefaultRootsHarvestTier()).ifPresent(tagBuilder -> tagBuilder.add(roots));
-                    mangroveFamily.defaultRootsTags().forEach(tag ->
-                            this.tag(tag).add(roots));
+                    mangroveFamily.defaultRootsTags().forEach(tag -> {
+                        if (!mangroveFamily.isOnlyIfLoaded()) {
+                            this.tag(tag).add(roots);
+                        } else {
+                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(roots));
+                        }
+                    });
                 });
             }
 
@@ -131,8 +152,14 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
         Species.REGISTRY.dataGenerationStream(this.modId).forEach(species -> {
             // Create dynamic sapling block tags.
             species.getSapling().ifPresent(sapling ->
-                    species.defaultSaplingTags().forEach(tag ->
-                            this.tag(tag).add(sapling)));
+                    species.defaultSaplingTags().forEach(tag -> {
+                        if (!species.isOnlyIfLoaded()) {
+                            this.tag(tag).add(sapling);
+                        } else {
+                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(sapling));
+                        }
+                    })
+            );
         });
 
         SoilProperties.REGISTRY.dataGenerationStream(this.modId).forEach(soilProperties -> {
@@ -140,7 +167,7 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
             soilProperties.getBlock().ifPresent(rootyBlock ->
                     tag(DTBlockTags.ROOTY_SOIL).add(rootyBlock));
             // add mangrove-like rooty blocks to the axe mineable tags.
-            if (soilProperties instanceof AerialRootsSoilProperties){
+            if (soilProperties instanceof AerialRootsSoilProperties) {
                 soilProperties.getBlock().ifPresent(rootyBlock ->
                         tag(DTBlockTags.AERIAL_ROOTS_ROOTY_SOIL).add(rootyBlock)
                 );

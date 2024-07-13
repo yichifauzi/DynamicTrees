@@ -40,5 +40,8 @@
         "bottom_flare",
         "mound",
         "roots"
-    ]
+    ],
+    "lang_overrides": {
+        "seed": "Dark Oak Acorn"
+    }
 }

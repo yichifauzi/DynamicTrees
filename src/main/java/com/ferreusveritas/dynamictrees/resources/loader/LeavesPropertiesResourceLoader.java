@@ -39,10 +39,12 @@ public final class LeavesPropertiesResourceLoader extends JsonRegistryResourceLo
         // Primitive leaves are needed before gathering data.
         this.gatherDataAppliers
                 .register("primitive_leaves", Block.class, LeavesProperties::setPrimitiveLeaves)
+                .registerArrayApplier("only_if_loaded",String.class,LeavesProperties::setOnlyIfLoaded)
                 .registerListApplier("seed_drop_chances", Float.class, LeavesProperties::setSeedDropChances)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, LeavesProperties::setTextureOverrides)
                 .registerMapApplier("model_overrides", ResourceLocation.class, LeavesProperties::setModelOverrides)
-                .register("frond_model_loader", PalmLeavesProperties.class, ResourceLocation.class, PalmLeavesProperties::setFrondLoader);
+                .register("frond_model_loader", PalmLeavesProperties.class, ResourceLocation.class, PalmLeavesProperties::setFrondLoader)
+                .registerMapApplier("lang_overrides", String.class, LeavesProperties::setLangOverrides);
 
         // Primitive leaves are needed both client and server (so cannot be done on load).
         this.setupAppliers.register("primitive_leaves", Block.class, LeavesProperties::setPrimitiveLeaves)

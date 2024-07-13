@@ -6,6 +6,7 @@ import com.ferreusveritas.dynamictrees.api.TreeRegistry;
 import com.ferreusveritas.dynamictrees.api.data.Generator;
 import com.ferreusveritas.dynamictrees.api.data.SaplingStateGenerator;
 import com.ferreusveritas.dynamictrees.api.data.SeedItemModelGenerator;
+import com.ferreusveritas.dynamictrees.api.data.SpeciesLangGenerator;
 import com.ferreusveritas.dynamictrees.api.event.Hooks;
 import com.ferreusveritas.dynamictrees.api.network.MapSignal;
 import com.ferreusveritas.dynamictrees.api.network.NodeInspector;
@@ -31,6 +32,7 @@ import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.data.DTItemTags;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTItemModelProvider;
+import com.ferreusveritas.dynamictrees.data.provider.DTLangProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTLootTableProvider;
 import com.ferreusveritas.dynamictrees.entity.FallingTreeEntity;
 import com.ferreusveritas.dynamictrees.entity.LingeringEffectorEntity;
@@ -2293,12 +2295,20 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
         return Collections.singletonList(DTItemTags.SEEDS);
     }
 
+    protected List<String> onlyIfLoaded = new ArrayList<>();
     protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
+    protected HashMap<String, String> langOverrides = new HashMap<>();
     protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
     public static final String SAPLING = "sapling";
     public static final String SEED_PARENT = "seed_parent";
     public static final String SEED = "seed";
 
+    public void setOnlyIfLoaded(String onlyIfLoaded) {
+        this.onlyIfLoaded.add(onlyIfLoaded);
+    }
+    public boolean isOnlyIfLoaded() {
+        return !onlyIfLoaded.isEmpty();
+    }
 
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
         this.modelOverrides.putAll(modelOverrides);
@@ -2306,12 +2316,18 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
         this.textureOverrides.putAll(textureOverrides);
     }
+    public void setLangOverrides(Map<String, String> textureOverrides) {
+        this.langOverrides.putAll(textureOverrides);
+    }
 
     public Optional<ResourceLocation> getModelPath(String key) {
         return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
     }
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
+    }
+    public Optional<String> getLangOverride(String key) {
+        return Optional.ofNullable(langOverrides.getOrDefault(key, null));
     }
     /**
      * @return the location of the dynamic sapling smartmodel for this type of species
@@ -2323,6 +2339,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
 
     protected final MutableLazyValue<Generator<DTBlockStateProvider, Species>> saplingStateGenerator =
             MutableLazyValue.supplied(SaplingStateGenerator::new);
+
+    protected final MutableLazyValue<Generator<DTLangProvider,Species>> speciesLangProvider =
+            MutableLazyValue.supplied(SpeciesLangGenerator::new);
 
     public void addSaplingTextures(BiConsumer<String, ResourceLocation> textureConsumer,
                                    ResourceLocation leavesTextureLocation, ResourceLocation barkTextureLocation) {
@@ -2357,6 +2376,10 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
     public void generateItemModelData(DTItemModelProvider provider) {
         // Generate seed models.
         this.seedModelGenerator.get().generate(provider, this);
+    }
+    @Override
+    public void generateLangData(DTLangProvider provider){
+        this.speciesLangProvider.get().generate(provider, this);
     }
 
     public boolean shouldGenerateVoluntaryDrops() {

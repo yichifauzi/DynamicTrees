@@ -31,5 +31,8 @@
                 "secondary_undergrowth_species": "dynamictrees:jungle_undergrowth"
             }
         }
-    ]
+    ],
+    "lang_overrides": {
+        "seed": "Jungle Pod"
+    }
 }

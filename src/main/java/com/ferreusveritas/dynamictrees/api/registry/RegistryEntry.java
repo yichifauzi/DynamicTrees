@@ -2,6 +2,7 @@ package com.ferreusveritas.dynamictrees.api.registry;
 
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTItemModelProvider;
+import com.ferreusveritas.dynamictrees.data.provider.DTLangProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -119,7 +120,8 @@ public abstract class RegistryEntry<T extends RegistryEntry<T>> {
 
     public void generateItemModelData(DTItemModelProvider provider) {
     }
-
+    public void generateLangData(DTLangProvider provider) {
+    }
     public final ResourceLocation getRegistryName() {
         return this.registryName;
     }

@@ -1,6 +1,7 @@
 package com.ferreusveritas.dynamictrees;
 
 import com.ferreusveritas.dynamictrees.api.GatherDataHelper;
+import com.ferreusveritas.dynamictrees.api.data.DTExtraLangGenerator;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
 import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
@@ -11,7 +12,6 @@ import com.ferreusveritas.dynamictrees.event.handler.EventHandlers;
 import com.ferreusveritas.dynamictrees.init.DTClient;
 import com.ferreusveritas.dynamictrees.init.DTConfigs;
 import com.ferreusveritas.dynamictrees.init.DTRegistries;
-import com.ferreusveritas.dynamictrees.init.DTTrees;
 import com.ferreusveritas.dynamictrees.loot.DTLoot;
 import com.ferreusveritas.dynamictrees.resources.Resources;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
@@ -21,6 +21,7 @@ import com.ferreusveritas.dynamictrees.worldgen.DynamicTreeFeature;
 import com.ferreusveritas.dynamictrees.worldgen.structure.VillageTreeReplacement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -109,7 +110,10 @@ public final class DynamicTrees {
     private void gatherData(final GatherDataEvent event) {
         //Generate the tree block and item data
         Resources.MANAGER.gatherData();
-        GatherDataHelper.gatherAllData( MOD_ID, event,
+        GatherDataHelper.addLangGenerator(MOD_ID, new DTExtraLangGenerator());
+        GatherDataHelper.gatherAllData(
+                MOD_ID,
+                event,
                 SoilProperties.REGISTRY,
                 Family.REGISTRY,
                 Species.REGISTRY,
@@ -121,6 +125,7 @@ public final class DynamicTrees {
                 dataGen.getPackOutput(), event.getLookupProvider(), Set.of(DynamicTrees.MOD_ID, DynamicTrees.MINECRAFT)
         ));
     }
+
 
     public static ResourceLocation location(final String path) {
         return new ResourceLocation(MOD_ID, path);
