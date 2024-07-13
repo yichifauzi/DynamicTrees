@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
+labels: bug, enhancement
 assignees: ''
 
 ---
@@ -10,7 +10,7 @@ assignees: ''
 **Rules (Read this first!)**
 This is just a template to help you post a useful issue.  Erase these rules and any irrelevant categories and content as you see fit. 
 
-- Only submit issues related to the latest version of the mod for the currently supported version of Minecraft (which is currently 1.12.2 and 1.16.5).
+- Only submit issues related to the latest version of the mod for the currently supported version of Minecraft.
 - When referring to software versions always use the actual version number and never "latest".
 - Use a paste site like [Gist](https://gist.github.com) or [Pastebin](https://pastebin.com) to dump any logs or crash reports. 
 
@@ -26,15 +26,15 @@ Steps to reproduce the behavior:
 If applicable, add screenshots to help explain your problem.
 
 **Rendering Glitches**
-Are you using OptiFine (or any equivalent mods that mess with rendering)?
+Are you using Sodium (or any equivalent mods that mess with rendering)?
 
 **Additional context**
 Add any other context about the problem here.
 
 **Crashes**
-- Are you running the latest version of Dynamic Trees? (Currently 0.9.23 in 1.12.2 or 0.10.0-Beta12 in 1.16.5)
-- If you are using the DT Biome O' Plenty Add-on do you have the latest version? (Currently 1.4.2)
-- If you are using the DT Thaumcraft Add-on do you have the latest version? (Currently 1.4.4)
+- Are you running the latest version of Dynamic Trees? 
+- What addons are you using?
+- Are you on the latest version for each addon?
 
 If the above mods are current then please submit a full crash log. The crash log normally contains the names of mods and their versions. Don't be that guy who submitted a crash report without first checking that the versions are current.
 

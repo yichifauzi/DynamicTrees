@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: enhancement
+labels: suggestion
 assignees: ''
 
 ---
@@ -10,9 +10,9 @@ assignees: ''
 **Feature request rules**
 This is just a template to help you post a useful issue.  Erase these rules and any irrelevant categories and content as you see fit.
 
-- Only submit issues related to the latest version of the mod for the currently supported version of Minecraft (which is currently 1.12.2 and 1.16.5).
+- Only submit issues related to the latest version of the mod for the currently supported version of Minecraft
 - When referring to software versions always use the actual version number and never "latest".
-- Do not request support for other mods (that should be done [here](https://github.com/ferreusveritas/DynamicTrees/issues/443)) or ports to other versions.
+- Do not request support for other mods (that should be done [here](https://github.com/orgs/DynamicTreesTeam/discussions/categories/compatibility-addon-suggestions)) or ports to other versions.
 - Make sure feature requests come under the project scope. The details of this can be found on the [CurseForge page](https://www.curseforge.com/minecraft/mc-mods/dynamictrees).
 
 If you are opening this **for any other reason** than to request a new feature, it will be closed without explanation! For bug reports, use the bug report template.
