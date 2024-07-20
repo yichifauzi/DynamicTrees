@@ -95,84 +95,16 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
 
     protected void addDTTags() {
         LeavesProperties.REGISTRY.dataGenerationStream(this.modId).forEach(leavesProperties ->
-                leavesProperties.addGeneratedBlockTags(this::tag)
-        );
+                leavesProperties.addGeneratedBlockTags(this::tag));
 
-        Family.REGISTRY.dataGenerationStream(this.modId).forEach(family -> {
-            // Create branch tag and harvest tag if a branch exists.
-            family.getBranch().ifPresent(branch -> {
-                this.tierTag(family.getDefaultBranchHarvestTier()).ifPresent(tagBuilder -> tagBuilder.add(branch));
-                family.defaultBranchTags().forEach(tag -> {
-                    if (!family.isOnlyIfLoaded()) {
-                        this.tag(tag).add(branch);
-                    } else {
-                        this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(branch));
-                    }
-                });
-            });
+        Family.REGISTRY.dataGenerationStream(this.modId).forEach(family ->
+                family.addGeneratedBlockTags(this::tag));
 
-            // Create stripped branch tag and harvest tag if the family has a stripped branch.
-            family.getStrippedBranch().ifPresent(strippedBranch -> {
-                this.tierTag(family.getDefaultStrippedBranchHarvestTier()).ifPresent(tagBuilder -> tagBuilder.add(strippedBranch));
-                family.defaultStrippedBranchTags().forEach(tag ->
-                {
-                    if (!family.isOnlyIfLoaded()) {
-                        this.tag(tag).add(strippedBranch);
-                    } else {
-                        this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(strippedBranch));
-                    }
-                });
-            });
+        Species.REGISTRY.dataGenerationStream(this.modId).forEach(species ->
+                species.addGeneratedBlockTags(this::tag));
 
-            //Create roots tag and root harvest tag if the family is mangrove-like.
-            if (family instanceof MangroveFamily mangroveFamily) {
-                mangroveFamily.getRoots().ifPresent(roots -> {
-                    this.tierTag(mangroveFamily.getDefaultRootsHarvestTier()).ifPresent(tagBuilder -> tagBuilder.add(roots));
-                    mangroveFamily.defaultRootsTags().forEach(tag -> {
-                        if (!mangroveFamily.isOnlyIfLoaded()) {
-                            this.tag(tag).add(roots);
-                        } else {
-                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(roots));
-                        }
-                    });
-                });
-            }
-
-        });
-
-        Species.REGISTRY.dataGenerationStream(this.modId).forEach(species -> {
-            // Create dynamic sapling block tags.
-            species.getSapling().ifPresent(sapling ->
-                    species.defaultSaplingTags().forEach(tag -> {
-                        if (!species.isOnlyIfLoaded()) {
-                            this.tag(tag).add(sapling);
-                        } else {
-                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(sapling));
-                        }
-                    })
-            );
-        });
-
-        SoilProperties.REGISTRY.dataGenerationStream(this.modId).forEach(soilProperties -> {
-            // add rooty blocks to the rooty soil tag.
-            soilProperties.getBlock().ifPresent(rootyBlock ->
-                    soilProperties.defaultSoilBlockTags().forEach(tag -> {
-                        if (!soilProperties.isOnlyIfLoaded()) {
-                            this.tag(tag).add(rootyBlock);
-                        } else {
-                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(rootyBlock));
-                        }
-                    }));
-        });
-    }
-
-    protected Optional<IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tierTag(@Nullable Tier tier) {
-        if (tier == null)
-            return Optional.empty();
-
-        TagKey<Block> tag = tier.getTag();
-
-        return tag == null ? Optional.empty() : Optional.of(this.tag(tag));
+        SoilProperties.REGISTRY.dataGenerationStream(this.modId).forEach(soilProperties ->
+                soilProperties.addGeneratedBlockTags(this::tag));
     }
 
     @Override

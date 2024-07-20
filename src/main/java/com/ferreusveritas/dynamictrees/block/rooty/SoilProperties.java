@@ -16,6 +16,8 @@ import com.ferreusveritas.dynamictrees.util.MutableLazyValue;
 import com.ferreusveritas.dynamictrees.util.Optionals;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.material.MapColor;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.ferreusveritas.dynamictrees.util.ResourceLocationUtils.prefix;
@@ -259,6 +262,18 @@ public class SoilProperties extends RegistryEntry<SoilProperties> implements Res
     }
     public void setOnlyIfLoaded(String onlyIfLoaded) {
         this.onlyIfLoaded.add(onlyIfLoaded);
+    }
+
+    public void addGeneratedBlockTags (Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tagAppender){
+        // add rooty blocks to the rooty soil tag.
+        getBlock().ifPresent(rootyBlock ->
+                defaultSoilBlockTags().forEach(tag -> {
+                    if (!isOnlyIfLoaded()) {
+                        tagAppender.apply(tag).add(rootyBlock);
+                    } else {
+                        tagAppender.apply(tag).addOptional(BuiltInRegistries.BLOCK.getKey(rootyBlock));
+                    }
+                }));
     }
 
     //////////////////////////////

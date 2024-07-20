@@ -46,33 +46,11 @@ public class DTItemTagsProvider extends ItemTagsProvider {
     }
 
     protected void addDTTags() {
-        Family.REGISTRY.dataGenerationStream(this.modId).forEach(family -> {
-            family.getBranchItem().ifPresent(item -> {
-                        if (!family.isOnlyIfLoaded()) {
-                            family.defaultBranchItemTags().forEach(tag -> this.tag(tag).add(item));
-                        } else {
-                            family.defaultBranchItemTags().forEach(tag -> this.tag(tag).addOptional(BuiltInRegistries.ITEM.getKey(item)));
-                        }
-                    }
-            );
-        });
+        Family.REGISTRY.dataGenerationStream(this.modId).forEach(family ->
+                family.addGeneratedItemTags(this::tag));
 
-        Species.REGISTRY.dataGenerationStream(this.modId).forEach(species -> {
-            // Some species return the common seed, so only return if the species has its own seed.
-            if (!species.hasSeed()) {
-                return;
-            }
-            // Create seed item tag.
-            species.getSeed().ifPresent(seed ->
-                    species.defaultSeedTags().forEach(tag ->{
-                                if (!species.isOnlyIfLoaded()) {
-                                    this.tag(tag).add(seed);
-                                } else {
-                                    this.tag(tag).addOptional(BuiltInRegistries.ITEM.getKey(seed));
-                                }
-                    })
-            );
-        });
+        Species.REGISTRY.dataGenerationStream(this.modId).forEach(species ->
+                species.addGeneratedItemTags(this::tag));
     }
 
     @Override

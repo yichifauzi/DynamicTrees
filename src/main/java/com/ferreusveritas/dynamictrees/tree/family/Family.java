@@ -36,6 +36,8 @@ import com.ferreusveritas.dynamictrees.util.MutableLazyValue;
 import com.ferreusveritas.dynamictrees.util.Optionals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -81,6 +83,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.ferreusveritas.dynamictrees.util.ResourceLocationUtils.prefix;
@@ -861,6 +864,52 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
                 Collections.singletonList(DTBlockTags.STRIPPED_BRANCHES_THAT_BURN);
     }
 
+    public void addGeneratedBlockTags (Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tagAppender){
+        getBranch().ifPresent(branch -> {
+            tierTag(getDefaultBranchHarvestTier(), tagAppender).ifPresent(tagBuilder -> tagBuilder.add(branch));
+            defaultBranchTags().forEach(tag -> {
+                if (!isOnlyIfLoaded()) {
+                    tagAppender.apply(tag).add(branch);
+                } else {
+                    tagAppender.apply(tag).addOptional(BuiltInRegistries.BLOCK.getKey(branch));
+                }
+            });
+        });
+
+        // Create stripped branch tag and harvest tag if the family has a stripped branch.
+        getStrippedBranch().ifPresent(strippedBranch -> {
+            tierTag(getDefaultStrippedBranchHarvestTier(), tagAppender).ifPresent(tagBuilder -> tagBuilder.add(strippedBranch));
+            defaultStrippedBranchTags().forEach(tag ->
+            {
+                if (!isOnlyIfLoaded()) {
+                    tagAppender.apply(tag).add(strippedBranch);
+                } else {
+                    tagAppender.apply(tag).addOptional(BuiltInRegistries.BLOCK.getKey(strippedBranch));
+                }
+            });
+        });
+    }
+
+    protected Optional<IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tierTag(@Nullable Tier tier, Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tagAppender) {
+        if (tier == null)
+            return Optional.empty();
+
+        TagKey<Block> tag = tier.getTag();
+
+        return tag == null ? Optional.empty() : Optional.of(tagAppender.apply(tag));
+    }
+
+    public void addGeneratedItemTags (Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tagAppender){
+        getBranchItem().ifPresent(item -> {
+                    if (!isOnlyIfLoaded()) {
+                        defaultBranchItemTags().forEach(tag -> tagAppender.apply(tag).add(item));
+                    } else {
+                        defaultBranchItemTags().forEach(tag -> tagAppender.apply(tag).addOptional(BuiltInRegistries.ITEM.getKey(item)));
+                    }
+                }
+        );
+    }
+
     /**
      * @return a constructor for the relevant branch block model builder for the corresponding loader
      */
@@ -986,7 +1035,8 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     public void generateLangData(DTLangProvider provider) {
         this.familyLangGenerator.get().generate(provider, this);
     }
-//////////////////////////////
+
+    //////////////////////////////
     // JAVA OBJECT STUFF
     //////////////////////////////
 

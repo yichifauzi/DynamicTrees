@@ -76,6 +76,8 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -996,9 +998,11 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
      */
     public boolean plantSapling(LevelAccessor level, BlockPos pos, boolean locationOverride) {
 
-        final DynamicSaplingBlock sapling = this.getSapling().or(() ->
-                isMegaSpecies() ? getPreMegaSpecies().getSapling() : this.getCommonSpecies().getSapling()
-                ).orElse(null);
+        Species saplingSpecies = this;
+        while (saplingSpecies.isMegaSpecies()){
+            saplingSpecies = getPreMegaSpecies();
+        }
+        final DynamicSaplingBlock sapling = saplingSpecies.getSapling().orElse(null);
 
         if (sapling == null || !level.getBlockState(pos).canBeReplaced() ||
                 !DynamicSaplingBlock.canSaplingStay(level, this, pos)) {
@@ -2429,6 +2433,36 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
                 Pair.of("perfectBiomes", this.perfectBiomes),
                 Pair.of("acceptableBlocksForGrowth", this.acceptableBlocksForGrowth),
                 Pair.of("genFeatures", this.genFeatures));
+    }
+
+    public void addGeneratedBlockTags (Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tagAppender){
+        // Create dynamic sapling block tags.
+        getSapling().ifPresent(sapling ->
+                defaultSaplingTags().forEach(tag -> {
+                    if (!isOnlyIfLoaded()) {
+                        tagAppender.apply(tag).add(sapling);
+                    } else {
+                        tagAppender.apply(tag).addOptional(BuiltInRegistries.BLOCK.getKey(sapling));
+                    }
+                })
+        );
+    }
+
+    public void addGeneratedItemTags (Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tagAppender){
+        // Some species return the common seed, so only return if the species has its own seed.
+        if (!hasSeed()) {
+            return;
+        }
+        // Create seed item tag.
+        getSeed().ifPresent(seed ->
+                defaultSeedTags().forEach(tag ->{
+                    if (!isOnlyIfLoaded()) {
+                        tagAppender.apply(tag).add(seed);
+                    } else {
+                        tagAppender.apply(tag).addOptional(BuiltInRegistries.ITEM.getKey(seed));
+                    }
+                })
+        );
     }
 
 }
