@@ -28,6 +28,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -60,6 +62,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * This class provides a means of holding individual properties for leaves.  This is necessary since leaves can contain
@@ -692,6 +695,18 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
                 Pair.of("smotherLeavesMax", this.smotherLeavesMax), Pair.of("lightRequirement", this.lightRequirement),
                 Pair.of("fireSpreadSpeed", this.fireSpreadSpeed), Pair.of("flammability", this.flammability),
                 Pair.of("connectAnyRadius", this.connectAnyRadius));
+    }
+
+    public void addGeneratedBlockTags (Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tagAppender){
+        getDynamicLeavesBlock().ifPresent(leaves ->
+                defaultLeavesTags().forEach(tag -> {
+                    if (isOnlyIfLoaded()) {
+                        tagAppender.apply(tag).addOptional(BuiltInRegistries.BLOCK.getKey(leaves));
+                    } else {
+                        tagAppender.apply(tag).add(leaves);
+                    }
+                })
+        );
     }
 
 }

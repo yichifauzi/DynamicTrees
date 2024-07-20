@@ -2,6 +2,7 @@ package com.ferreusveritas.dynamictrees.resources.loader;
 
 import com.ferreusveritas.dynamictrees.api.applier.ApplierRegistryEvent;
 import com.ferreusveritas.dynamictrees.api.resource.loading.preparation.JsonRegistryResourceLoader;
+import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.block.rooty.RootyBlock;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilHelper;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
@@ -36,6 +37,8 @@ public final class SoilPropertiesResourceLoader extends JsonRegistryResourceLoad
         // Primitive soil is needed before gathering data.
         this.gatherDataAppliers
                 .register("primitive_soil", Block.class, SoilProperties::setPrimitiveSoilBlock)
+                .register("only_if_loaded",String.class, SoilProperties::setOnlyIfLoaded)
+                .registerArrayApplier("only_if_loaded",String.class,SoilProperties::setOnlyIfLoaded)
                 .registerMapApplier("model_overrides", ResourceLocation.class, SoilProperties::setModelOverrides)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, SoilProperties::setTextureOverrides);
         ;

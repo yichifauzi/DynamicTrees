@@ -7,6 +7,7 @@ import com.ferreusveritas.dynamictrees.api.registry.RegistryEntry;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
+import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.init.DTTrees;
 import com.ferreusveritas.dynamictrees.resources.Resources;
@@ -16,6 +17,7 @@ import com.ferreusveritas.dynamictrees.util.Optionals;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -24,9 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static com.ferreusveritas.dynamictrees.util.ResourceLocationUtils.prefix;
@@ -71,6 +71,7 @@ public class SoilProperties extends RegistryEntry<SoilProperties> implements Res
     protected Integer soilFlags = 0;
     private ResourceLocation blockRegistryName;
     protected boolean hasSubstitute;
+    protected List<String> onlyIfLoaded = new ArrayList<>();
 
     //used for null soil properties
     protected SoilProperties() {
@@ -247,6 +248,17 @@ public class SoilProperties extends RegistryEntry<SoilProperties> implements Res
     public ResourceLocation getRootsOverlayModelLocation() {
         if (modelOverrides.containsKey(ROOTS)) return modelOverrides.get(ROOTS);
         return DynamicTrees.location("block/roots");
+    }
+
+    public List<TagKey<Block>> defaultSoilBlockTags() {
+        return Collections.singletonList(DTBlockTags.ROOTY_SOIL);
+    }
+
+    public boolean isOnlyIfLoaded() {
+        return !onlyIfLoaded.isEmpty();
+    }
+    public void setOnlyIfLoaded(String onlyIfLoaded) {
+        this.onlyIfLoaded.add(onlyIfLoaded);
     }
 
     //////////////////////////////

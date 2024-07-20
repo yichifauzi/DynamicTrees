@@ -94,18 +94,9 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
     }
 
     protected void addDTTags() {
-        LeavesProperties.REGISTRY.dataGenerationStream(this.modId).forEach(leavesProperties -> {
-            // Create dynamic leaves block tag.
-            leavesProperties.getDynamicLeavesBlock().ifPresent(leaves ->
-                    leavesProperties.defaultLeavesTags().forEach(tag -> {
-                        if (leavesProperties.isOnlyIfLoaded()) {
-                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(leaves));
-                        } else {
-                            this.tag(tag).add(leaves);
-                        }
-                    })
-            );
-        });
+        LeavesProperties.REGISTRY.dataGenerationStream(this.modId).forEach(leavesProperties ->
+                leavesProperties.addGeneratedBlockTags(this::tag)
+        );
 
         Family.REGISTRY.dataGenerationStream(this.modId).forEach(family -> {
             // Create branch tag and harvest tag if a branch exists.
@@ -165,13 +156,13 @@ public class DTBlockTagsProvider extends BlockTagsProvider {
         SoilProperties.REGISTRY.dataGenerationStream(this.modId).forEach(soilProperties -> {
             // add rooty blocks to the rooty soil tag.
             soilProperties.getBlock().ifPresent(rootyBlock ->
-                    tag(DTBlockTags.ROOTY_SOIL).add(rootyBlock));
-            // add mangrove-like rooty blocks to the axe mineable tags.
-            if (soilProperties instanceof AerialRootsSoilProperties) {
-                soilProperties.getBlock().ifPresent(rootyBlock ->
-                        tag(DTBlockTags.AERIAL_ROOTS_ROOTY_SOIL).add(rootyBlock)
-                );
-            }
+                    soilProperties.defaultSoilBlockTags().forEach(tag -> {
+                        if (!soilProperties.isOnlyIfLoaded()) {
+                            this.tag(tag).add(rootyBlock);
+                        } else {
+                            this.tag(tag).addOptional(BuiltInRegistries.BLOCK.getKey(rootyBlock));
+                        }
+                    }));
         });
     }
 

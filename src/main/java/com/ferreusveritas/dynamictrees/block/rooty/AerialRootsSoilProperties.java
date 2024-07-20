@@ -6,6 +6,7 @@ import com.ferreusveritas.dynamictrees.api.network.MapSignal;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.block.BlockWithDynamicHardness;
 import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
+import com.ferreusveritas.dynamictrees.data.DTBlockTags;
 import com.ferreusveritas.dynamictrees.entity.FallingTreeEntity;
 import com.ferreusveritas.dynamictrees.systems.nodemapper.NetVolumeNode;
 import com.ferreusveritas.dynamictrees.systems.nodemapper.RootIntegrityNode;
@@ -16,6 +17,7 @@ import com.ferreusveritas.dynamictrees.util.ItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -41,10 +43,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class AerialRootsSoilProperties extends SoilProperties {
 
@@ -253,6 +252,12 @@ public class AerialRootsSoilProperties extends SoilProperties {
             }
         }
 
+    }
+
+    public List<TagKey<Block>> defaultSoilBlockTags() {
+        List<TagKey<Block>> defaultTags = new LinkedList<>(super.defaultSoilBlockTags());
+        defaultTags.add(DTBlockTags.AERIAL_ROOTS_ROOTY_SOIL);
+        return defaultTags;
     }
 
 
