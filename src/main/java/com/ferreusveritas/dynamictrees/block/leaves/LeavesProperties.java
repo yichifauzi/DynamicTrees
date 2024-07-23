@@ -171,6 +171,7 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
     protected AgeingConfiguration ageingConfiguration = AgeingConfiguration.ALWAYS;
     protected boolean connectAnyRadius = false;
     protected boolean requiresShears = true;
+    protected boolean hasTickParticles = false;
 
     private LeavesProperties() {
         this.blockLootTableSupplier = new LootTableSupplier("null/", DTTrees.NULL);
@@ -598,6 +599,10 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
 
     public void setRequiresShears(boolean requiresShears) {
         this.requiresShears = requiresShears;
+    }
+
+    public void setHasTickParticles(boolean hasTickParticles) {
+        this.hasTickParticles = hasTickParticles;
     }
 
     public List<TagKey<Block>> defaultLeavesTags() {

@@ -13,6 +13,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Use 'has_tick_particles' property instead
+ */
+@Deprecated
 public class CherryLeavesProperties extends LeavesProperties {
 
     public static final TypedRegistry.EntryType<LeavesProperties> TYPE = TypedRegistry.newType(CherryLeavesProperties::new);

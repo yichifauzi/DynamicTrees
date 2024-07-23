@@ -68,7 +68,7 @@ public class DTTrees {
         event.registerType(DynamicTrees.location("wart"), WartProperties.TYPE);
         event.registerType(DynamicTrees.location("palm"), PalmLeavesProperties.TYPE);
         event.registerType(DynamicTrees.location("scruffy"), ScruffyLeavesProperties.TYPE);
-        event.registerType(DynamicTrees.location("cherry"), CherryLeavesProperties.TYPE);
+        //event.registerType(DynamicTrees.location("cherry"), CherryLeavesProperties.TYPE);
     }
 
     @SubscribeEvent

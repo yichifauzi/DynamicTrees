@@ -70,6 +70,7 @@ public final class LeavesPropertiesResourceLoader extends JsonRegistryResourceLo
                 .register("does_age", String.class, (Applier<LeavesProperties, String>) this::readDoesAge)
                 .register("ageing_configuration", LeavesProperties.AgeingConfiguration.class, LeavesProperties::setAgeingConfiguration)
                 .register("can_grow_on_ground", Boolean.class, LeavesProperties::setCanGrowOnGround)
+                .register("has_tick_particles", Boolean.class, LeavesProperties::setHasTickParticles)
                 .register("scruffy_leaf_chance", ScruffyLeavesProperties.class, Float.class, ScruffyLeavesProperties::setLeafChance)
                 .register("scruffy_max_hydro", ScruffyLeavesProperties.class, Integer.class, ScruffyLeavesProperties::setMaxHydro);
 

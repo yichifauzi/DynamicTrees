@@ -79,7 +79,14 @@ public class DynamicLeavesBlock extends LeavesBlock implements TreePart, Ageable
         return !state.getValue(PERSISTENT);
     }
 
-
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (properties.hasTickParticles && properties.getPrimitiveLeavesBlock().isPresent()) {
+            properties.getPrimitiveLeavesBlock().ifPresent((b)->b.animateTick(state,level,pos,random));
+        } else {
+            super.animateTick(state, level, pos, random);
+        }
+    }
 
     public void setProperties(LeavesProperties properties) {
         this.properties = properties;
