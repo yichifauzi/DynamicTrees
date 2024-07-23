@@ -71,7 +71,7 @@ public class BasicBranchBlock extends BranchBlock implements SimpleWaterloggedBl
      * @param name name of branch, without a {@code _branch} suffix
      */
     public BasicBranchBlock(ResourceLocation name, MapColor mapColor) {
-        this(name, BlockBehaviour.Properties.of().mapColor(mapColor).sound(SoundType.WOOD), RADIUS, MAX_RADIUS);
+        this(name, BlockBehaviour.Properties.of().mapColor(mapColor), RADIUS, MAX_RADIUS);
     }
 
     /**
@@ -112,11 +112,6 @@ public class BasicBranchBlock extends BranchBlock implements SimpleWaterloggedBl
         }
 
         return branchStates;
-    }
-
-    @Override
-    public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
-        return getFamily().getBranchSoundType(state, level, pos, entity);
     }
 
     ///////////////////////////////////////////

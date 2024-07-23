@@ -49,7 +49,8 @@ public final class FamilyResourceLoader extends JsonRegistryResourceLoader<Famil
                 .registerArrayApplier("only_if_loaded", String.class, Family::setOnlyIfLoaded)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, Family::setTextureOverrides)
                 .registerMapApplier("model_overrides", ResourceLocation.class, Family::setModelOverrides)
-                .registerMapApplier("lang_overrides", String.class, Family::setLangOverrides);
+                .registerMapApplier("lang_overrides", String.class, Family::setLangOverrides)
+                .register("stick", Item.class, Family::setStick);
 
         this.setupAppliers
                 .register("primitive_log", Block.class, Family::setPrimitiveLog)

@@ -574,8 +574,12 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
         this.isFireProof = isFireProof;
     }
 
+    /**
+     * Use branchBlock.getSoundType(state, level, pos, entity) instead
+     */
+    @Deprecated
     public SoundType getBranchSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
-        return this.getDefaultBranchSoundType();
+        return null;
     }
 
     /**

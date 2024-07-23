@@ -166,7 +166,7 @@ public class DTLootTableProvider extends LootTableProvider {
             }
         }
 
-        public static LootTable.Builder createLeavesBlockDrops(Block primitiveLeavesBlock, float[] seedChances) {
+        public static LootTable.Builder createLeavesBlockDrops(Block primitiveLeavesBlock, float[] seedChances, Item stickItem) {
             return createSilkTouchOrShearsDispatchTable(
                     primitiveLeavesBlock,
                     SeedItemLootPoolEntry.lootTableSeedItem()
@@ -175,7 +175,7 @@ public class DTLootTableProvider extends LootTableProvider {
                             .when(SeasonalSeedDropChance.seasonalSeedDropChance())
             ).withPool(
                     LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(HAS_NO_SHEARS_OR_SILK_TOUCH)
-                            .add(LootItem.lootTableItem(Items.STICK)
+                            .add(LootItem.lootTableItem(stickItem)
                                     .apply(SetItemCountFunction.setCount(
                                             UniformGenerator.between(1.0F, 2.0F)
                                     ))
