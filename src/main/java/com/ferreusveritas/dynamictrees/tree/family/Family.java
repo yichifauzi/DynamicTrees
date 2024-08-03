@@ -888,6 +888,7 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     public static final String STRIPPED_BRANCH_TOP = "stripped_branch_top";
     public static final String ROOTS_SIDE = "roots_side";
     public static final String ROOTS_TOP = "roots_top";
+    public static final String COVERED_ROOTS_BLOCK = "covered_roots_block";
 
     public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
         this.textureOverrides.putAll(textureOverrides);
@@ -895,9 +896,8 @@ public class Family extends RegistryEntry<Family> implements Resettable<Family> 
     public Optional<ResourceLocation> getTexturePath(String key) {
         return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
     }
-    //There are no models to override but this is here for future-proofing.
     public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
-        this.modelOverrides.putAll(textureOverrides);
+        this.modelOverrides.putAll(modelOverrides);
     }
     public Optional<ResourceLocation> getModelPath(String key) {
         return Optional.ofNullable(modelOverrides.getOrDefault(key, null));

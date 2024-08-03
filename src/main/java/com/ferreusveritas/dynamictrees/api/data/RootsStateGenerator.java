@@ -40,7 +40,10 @@ public class RootsStateGenerator implements Generator<DTBlockStateProvider, Fami
                 .partialState().with(BasicRootsBlock.LAYER, BasicRootsBlock.Layer.FILLED)
                 .modelForState().modelFile(builderFilled.end()).addModel()
                 .partialState().with(BasicRootsBlock.LAYER, BasicRootsBlock.Layer.COVERED)
-                .modelForState().modelFile(provider.models().getExistingFile(provider.blockTexture(dependencies.get(PRIMITIVE_COVERED_ROOT)))).addModel();
+                .modelForState().modelFile(provider.models().getExistingFile(input
+                                .getModelPath(Family.COVERED_ROOTS_BLOCK)
+                                .orElse(provider.blockTexture(dependencies.get(PRIMITIVE_COVERED_ROOT)))
+                )).addModel();
     }
 
     @Override
