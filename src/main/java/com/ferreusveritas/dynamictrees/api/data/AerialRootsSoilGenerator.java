@@ -5,6 +5,8 @@ import com.ferreusveritas.dynamictrees.block.branch.BasicRootsBlock;
 import com.ferreusveritas.dynamictrees.block.rooty.AerialRootsSoilProperties;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
+import com.ferreusveritas.dynamictrees.tree.family.Family;
+import com.ferreusveritas.dynamictrees.util.ResourceLocationUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
@@ -23,7 +25,7 @@ public final class AerialRootsSoilGenerator extends SoilStateGenerator {
         for (int i=1; i<=8; i++){
             builder = builder.partialState().with(BasicRootsBlock.RADIUS, i)
                     .modelForState().modelFile(soilModelBuilder(
-                            provider, i,
+                            provider, input, i,
                             provider.blockTexture(dependencies.get(SOIL)).getPath(),
                             dependencies.get(PRIMITIVE_SOIL),
                             dependencies.get(ROOTS))
@@ -40,18 +42,19 @@ public final class AerialRootsSoilGenerator extends SoilStateGenerator {
                 .append(ROOTS, aerialInput.getFamily().getPrimitiveRoots());
     }
 
-    private BlockModelBuilder soilModelBuilder (BlockStateProvider provider, int radius, String name, Block primitiveBlock, Block roots){
-        ResourceLocation side = provider.blockTexture(primitiveBlock);
-        ResourceLocation top = new ResourceLocation(side.getNamespace(), side.getPath()+"_top");
-        //ResourceLocation rootsLoc = provider.blockTexture(roots);
-        //ResourceLocation overlaySide = new ResourceLocation(rootsLoc.getNamespace(), rootsLoc.getPath()+"_side");
-        //ResourceLocation overlayEnd = new ResourceLocation(rootsLoc.getNamespace(), rootsLoc.getPath()+"_top");
-        return provider.models().withExistingParent(name+"_radius"+radius,  DynamicTrees.location("block/smartmodel/rooty/aerial_roots_radius"+ radius))
+    private BlockModelBuilder soilModelBuilder(BlockStateProvider provider, SoilProperties input, int radius, String name, Block primitiveBlock, Block roots) {
+        AerialRootsSoilProperties aerialInput = (AerialRootsSoilProperties)input;
+        ResourceLocation side = aerialInput.getFamily().getTexturePath(Family.BRANCH).orElse(provider.blockTexture(primitiveBlock));
+        ResourceLocation top = aerialInput.getFamily().getTexturePath(Family.BRANCH_TOP).orElse(ResourceLocationUtils.suffix(provider.blockTexture(primitiveBlock),"_top"));
+        ResourceLocation roots_side = aerialInput.getFamily().getTexturePath(Family.ROOTS_SIDE).orElse(ResourceLocationUtils.suffix(provider.blockTexture(roots), "_side"));
+        ResourceLocation roots_top = aerialInput.getFamily().getTexturePath(Family.ROOTS_SIDE).orElse(ResourceLocationUtils.suffix(provider.blockTexture(roots),"_top"));
+        BlockModelBuilder builder = provider.models().withExistingParent(name+"_radius"+radius,  DynamicTrees.location("block/smartmodel/rooty/aerial_roots_radius"+ radius))
                 .texture("side", side)
                 .texture("end", top)
-                //.texture("overlay", overlaySide)
-                //.texture("overlay_end", overlayEnd)
-                ;
+                .texture("overlay", roots_side)
+                .texture("overlay_end", roots_top);
+        input.getTexturePath(SoilProperties.ROOTS).ifPresent((r)->builder.texture("roots", r));
+        return builder;
     }
 
 }
