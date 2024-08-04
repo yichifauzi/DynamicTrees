@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
@@ -235,6 +236,11 @@ public abstract class BranchBlock extends BlockWithDynamicHardness implements Tr
     @Override
     public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
         return false;
+    }
+
+    public BlockState getStateForDecay (BlockState state, LevelAccessor level, BlockPos pos){
+        boolean waterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
+        return waterlogged ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
     }
 
     ///////////////////////////////////////////

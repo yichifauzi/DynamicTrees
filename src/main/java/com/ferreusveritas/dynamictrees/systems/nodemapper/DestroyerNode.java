@@ -51,9 +51,7 @@ public class DestroyerNode extends FindEndsNode {
         BranchBlock branch = TreeHelper.getBranch(state);
 
         if (branch != null && species.getFamily() == branch.getFamily()) {
-            boolean waterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
-
-            level.setBlock(pos, waterlogged ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);//Destroy the branch and notify the client
+            level.setBlock(pos, branch.getStateForDecay(state, level, pos), 3);//Destroy the branch and notify the client
         }
 
         return super.run(state, level, pos, fromDir);
