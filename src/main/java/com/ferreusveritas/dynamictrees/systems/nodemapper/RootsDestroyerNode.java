@@ -27,11 +27,7 @@ public class RootsDestroyerNode extends FindEndsNode {
         BranchBlock branch = TreeHelper.getBranch(state);
 
         if (branch != null) {
-            boolean waterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
-            BasicRootsBlock.Layer layer = state.hasProperty(BasicRootsBlock.LAYER) ? state.getValue(BasicRootsBlock.LAYER) : BasicRootsBlock.Layer.EXPOSED;
-            Block primitive = (layer == BasicRootsBlock.Layer.COVERED && layer.getPrimitive(family).isPresent()) ? layer.getPrimitive(family).get() : Blocks.AIR;
-
-            level.setBlock(pos, waterlogged ? Blocks.WATER.defaultBlockState() : primitive.defaultBlockState(), 3);//Destroy the branch and notify the client
+            level.setBlock(pos, branch.getStateForDecay(state, level, pos), 3);//Destroy the branch and notify the client
         }
 
         return super.run(state, level, pos, fromDir);

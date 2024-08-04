@@ -177,7 +177,14 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
         boolean replacingWater = currentState.getFluidState() == Fluids.WATER.getSource(false);
         boolean replacingGround = getFamily().isAcceptableSoilForRootSystem(currentState);
         boolean setWaterlogged = replacingWater && !replacingGround;
-        Layer layer = currentState.is(this) ? currentState.getValue(LAYER) : (replacingGround?Layer.COVERED:Layer.EXPOSED);
+        boolean isFullBlock = radius >= 8;
+        Layer layer;
+        if (currentState.is(this)){
+            layer = currentState.getValue(LAYER);
+            if (layer == Layer.COVERED && isFullBlock){
+                layer = Layer.FILLED;
+            }
+        } else layer = replacingGround ? Layer.COVERED : Layer.EXPOSED;
         level.setBlock(pos, getStateForRadius(radius)
                         .setValue(LAYER, layer)
                         .setValue(WATERLOGGED, setWaterlogged),
@@ -281,15 +288,23 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!isFullBlock(state)) {
-            ItemStack handStack = player.getItemInHand(hand);
-            Block coverBlock = getFamily().getPrimitiveCoveredRoots().orElse(null);
-            if (coverBlock != null && handStack.getItem() == coverBlock.asItem()){
-                BlockState newState = state.setValue(LAYER, Layer.COVERED).setValue(WATERLOGGED, false);
-                if (canPlace(player, level, pos, newState)){
-                    level.setBlock(pos, newState, 3);
-                    if (!player.isCreative()) handStack.shrink(1);
-                    level.playSound(null, pos, coverBlock.getSoundType(state, level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 1f, 0.8f);
-                    return InteractionResult.SUCCESS;
+            Layer layer = Layer.COVERED;
+            if (state.getValue(RADIUS) >= 8){
+                if (state.getValue(LAYER) == Layer.EXPOSED)
+                    layer = Layer.FILLED;
+                else layer = null;
+            }
+            if (layer != null){
+                ItemStack handStack = player.getItemInHand(hand);
+                Block coverBlock = getFamily().getPrimitiveCoveredRoots().orElse(null);
+                if (coverBlock != null && handStack.getItem() == coverBlock.asItem()){
+                    BlockState newState = state.setValue(LAYER, layer).setValue(WATERLOGGED, false);
+                    if (canPlace(player, level, pos, newState)){
+                        level.setBlock(pos, newState, 3);
+                        if (!player.isCreative()) handStack.shrink(1);
+                        level.playSound(null, pos, coverBlock.getSoundType(state, level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 1f, 0.8f);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
             }
         }
@@ -298,7 +313,6 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
 
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-
         if (isFullBlock(state)){
             level.setBlock(pos, state.setValue(LAYER, Layer.FILLED), level.isClientSide ? 11 : 3);
             this.spawnDestroyParticles(level, player, pos, state);
@@ -407,6 +421,14 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
         final float hardness = this.getFamily().getPrimitiveLog().orElse(Blocks.AIR).defaultBlockState()
                 .getDestroySpeed(level, pos) * (radius * radius) / 64.0f * 8.0f;
         return (float) Math.min(hardness, DTConfigs.MAX_TREE_HARDNESS.get()); // So many youtube let's plays start with "OMG, this is taking so long to break this tree!"
+    }
+
+    @Override
+    public BlockState getStateForDecay(BlockState state, LevelAccessor level, BlockPos pos) {
+        boolean waterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
+        BasicRootsBlock.Layer layer = state.hasProperty(BasicRootsBlock.LAYER) ? state.getValue(BasicRootsBlock.LAYER) : BasicRootsBlock.Layer.EXPOSED;
+        Block primitive = (layer == BasicRootsBlock.Layer.COVERED && layer.getPrimitive(getFamily()).isPresent()) ? layer.getPrimitive(getFamily()).get() : Blocks.AIR;
+        return waterlogged ? Blocks.WATER.defaultBlockState() : primitive.defaultBlockState();
     }
 
     //////////////////////////////
