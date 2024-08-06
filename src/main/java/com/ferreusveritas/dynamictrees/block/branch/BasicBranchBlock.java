@@ -496,4 +496,10 @@ public class BasicBranchBlock extends BranchBlock implements SimpleWaterloggedBl
         return signal;
     }
 
+    @Override
+    public BlockState getStateForDecay (BlockState state, LevelAccessor level, BlockPos pos){
+        boolean waterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
+        return waterlogged ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
+    }
+
 }
