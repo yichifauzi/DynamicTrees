@@ -424,12 +424,23 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
         return (float) Math.min(hardness, DTConfigs.MAX_TREE_HARDNESS.get()); // So many youtube let's plays start with "OMG, this is taking so long to break this tree!"
     }
 
+    //This is the state that will replace the root when the tree is felled.
     @Override
     public BlockState getStateForDecay(BlockState state, LevelAccessor level, BlockPos pos) {
         boolean waterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
         BasicRootsBlock.Layer layer = state.hasProperty(BasicRootsBlock.LAYER) ? state.getValue(BasicRootsBlock.LAYER) : BasicRootsBlock.Layer.EXPOSED;
         Block primitive = (layer == BasicRootsBlock.Layer.COVERED && layer.getPrimitive(getFamily()).isPresent()) ? layer.getPrimitive(getFamily()).get() : Blocks.AIR;
         return waterlogged ? Blocks.WATER.defaultBlockState() : primitive.defaultBlockState();
+    }
+
+    //This allows for the correct tool to be used in the root covering (shovel instead of axe, for example).
+    @Deprecated
+    public float getDestroyProgress(BlockState pState, Player pPlayer, BlockGetter pLevel, BlockPos pPos) {
+        Optional<Block> covered = getFamily().getPrimitiveCoveredRoots();
+        if (pState.hasProperty(LAYER) && pState.getValue(LAYER) == Layer.COVERED && covered.isPresent()){
+            return covered.get().getDestroyProgress(covered.get().defaultBlockState(), pPlayer, pLevel, pPos);
+        }
+        return super.getDestroyProgress(pState, pPlayer, pLevel, pPos);
     }
 
     //////////////////////////////
@@ -682,4 +693,5 @@ public class BasicRootsBlock extends BranchBlock implements SimpleWaterloggedBlo
 
         return signal;
     }
+
 }
