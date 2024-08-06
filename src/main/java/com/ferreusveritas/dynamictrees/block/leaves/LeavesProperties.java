@@ -625,6 +625,10 @@ public class LeavesProperties extends RegistryEntry<LeavesProperties> implements
         //this.langGenerator.get().generate(provider, this);
     }
 
+    public boolean isCompatibleLeaves(LeavesProperties leaves){
+        return this.getFamily() == leaves.getFamily();
+    }
+
     ///////////////////////////////////////////
     // LEAVES COLORS
     ///////////////////////////////////////////

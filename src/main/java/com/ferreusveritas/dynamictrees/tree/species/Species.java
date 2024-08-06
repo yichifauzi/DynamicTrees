@@ -100,7 +100,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -965,6 +964,9 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
                 this.setSapling(RegistryHandler.addBlock(this.getSaplingRegName(), () -> new DynamicSaplingBlock(this)));
     }
 
+    /**
+     * @return the sapling block. Empty Optional if none is present.
+     */
     public Optional<DynamicSaplingBlock> getSapling() {
         return Optional.ofNullable(this.saplingBlock == null ? null : this.saplingBlock.get());
     }
@@ -997,12 +999,8 @@ public class Species extends RegistryEntry<Species> implements Resettable<Specie
      * @return true if the planting was successful
      */
     public boolean plantSapling(LevelAccessor level, BlockPos pos, boolean locationOverride) {
-
-        Species saplingSpecies = this;
-        while (saplingSpecies.isMegaSpecies()){
-            saplingSpecies = getPreMegaSpecies();
-        }
-        final DynamicSaplingBlock sapling = saplingSpecies.getSapling().orElse(null);
+        DynamicSaplingBlock commonSapling = getCommonSpecies().getSapling().orElse(null);
+        final DynamicSaplingBlock sapling = locationOverride ? commonSapling : getSapling().orElse(commonSapling);
 
         if (sapling == null || !level.getBlockState(pos).canBeReplaced() ||
                 !DynamicSaplingBlock.canSaplingStay(level, this, pos)) {
